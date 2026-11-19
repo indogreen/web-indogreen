@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80" role="img" aria-label="INDOGREEN Logo">
+  <!-- TODO-CONTENT: DUMMY LOGO VECTOR - REPLACE WITH OFFICIAL ASSET FROM PT. INDOGREEN -->
+  <rect width="320" height="80" rx="40" fill="#000000"/>
+  <g transform="translate(24, 16)">
+    <!-- Solar Sun Icon with Green & Yellow -->
+    <circle cx="24" cy="24" r="14" fill="#ffff00"/>
+    <path d="M24 2 L24 8 M24 40 L24 46 M2 24 L8 24 M40 24 L46 24 M8.4 8.4 L12.7 12.7 M35.3 35.3 L39.6 39.6 M8.4 39.6 L12.7 35.3 M35.3 12.7 L39.6 8.4" stroke="#00b100" stroke-width="3.5" stroke-linecap="round"/>
+    <!-- Leaf motif in center -->
+    <path d="M24 16 C30 20 30 28 24 32 C18 28 18 20 24 16 Z" fill="#00b100"/>
+  </g>
+  <!-- Brand Wordmark -->
+  <text x="86" y="50" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" font-size="28" font-weight="900" letter-spacing="1.5">
+    <tspan fill="#ffff00">INDO</tspan><tspan fill="#00b100">GREEN</tspan>
+  </text>
+  <text x="88" y="65" font-family="Inter, sans-serif" font-size="9" font-weight="700" fill="#ffffff" letter-spacing="2">SOLAR ENERGY COMPANY</text>
+</svg>

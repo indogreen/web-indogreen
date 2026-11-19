@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" role="img" aria-label="Hero Background Placeholder">
+  <!-- TODO-CONTENT: DUMMY HERO IMAGE - REPLACE WITH HIGH-RES 16:9 PHOTOGRAPHY FROM PT. INDOGREEN -->
+  <defs>
+    <linearGradient id="heroDarkGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="50%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </linearGradient>
+    <pattern id="gridPattern" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M 60 0 L 0 0 0 60" fill="none" stroke="#222222" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#heroDarkGrad)"/>
+  <rect width="1920" height="1080" fill="url(#gridPattern)" opacity="0.4"/>
+  <!-- Stylized Solar Panel Array Perspective -->
+  <g transform="translate(900, 300)" stroke="#00b100" stroke-width="1.5" fill="none" opacity="0.35">
+    <polygon points="0,400 400,200 900,350 400,600" />
+    <polygon points="50,380 430,190 880,330 430,560" />
+    <line x1="200" y1="300" x2="650" y2="475" />
+    <line x1="300" y1="250" x2="750" y2="425" />
+  </g>
+  <!-- 12px Signature Corner Square Motif -->
+  <rect x="80" y="80" width="16" height="16" fill="#00b100"/>
+  <!-- Center watermark text -->
+  <text x="960" y="520" text-anchor="middle" font-family="Inter, sans-serif" font-size="32" font-weight="700" fill="#5e5e5e" letter-spacing="4">
+    [TODO-CONTENT: DUMMY HERO PHOTOGRAPHY 16:9]
+  </text>
+  <text x="960" y="560" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="400" fill="#898989">
+    Dimensi Rekomendasi: 2560 × 1440 px (Proyek Instalasi Surya / Rooftop / Solar Farm)
+  </text>
+</svg>

@@ -1,0 +1,126 @@
+name: Monorepo Quality Gate CI
+
+on:
+  push:
+    branches:
+      - main
+      - 'phase/**'
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs-check:
+    name: Documentation Quality Gate
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Verify Architecture Documents
+        run: |
+          echo "Verifying documentation completeness..."
+          test -f docs/00-audit.md || (echo "Missing docs/00-audit.md" && exit 1)
+          test -f docs/01-ia-sitemap.md || (echo "Missing docs/01-ia-sitemap.md" && exit 1)
+          test -f docs/02-architecture.md || (echo "Missing docs/02-architecture.md" && exit 1)
+          test -f docs/03-data-model.md || (echo "Missing docs/03-data-model.md" && exit 1)
+          test -f docs/04-api-contract.md || (echo "Missing docs/04-api-contract.md" && exit 1)
+          test -f docs/05-design-decisions.md || (echo "Missing docs/05-design-decisions.md" && exit 1)
+          test -f docs/06-content-migration.md || (echo "Missing docs/06-content-migration.md" && exit 1)
+          test -f docs/DESIGN.md || (echo "Missing docs/DESIGN.md" && exit 1)
+          test -f AGENTS.md || (echo "Missing AGENTS.md" && exit 1)
+          test -f CLAUDE.md || (echo "Missing CLAUDE.md" && exit 1)
+          echo "All core foundation documents verified."
+
+  backend-ci:
+    name: Backend CI (Laravel)
+    needs: docs-check
+    runs-on: ubuntu-24.04
+    # Job ini diaktifkan penuh pada Fase 2 saat backend Laravel telah diinstal
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check if Backend Installed
+        id: check_backend
+        run: |
+          if [ -f "backend/composer.json" ]; then
+            echo "installed=true" >> $GITHUB_OUTPUT
+          else
+            echo "installed=false" >> $GITHUB_OUTPUT
+            echo "Backend not installed yet (Fase 1 skeleton). Skipping backend test suite."
+          fi
+
+      - name: Setup PHP 8.4
+        if: steps.check_backend.outputs.installed == 'true'
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, bcmath
+          coverage: none
+
+      - name: Install Dependencies
+        if: steps.check_backend.outputs.installed == 'true'
+        working-directory: ./backend
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run Code Style Check (Laravel Pint)
+        if: steps.check_backend.outputs.installed == 'true'
+        working-directory: ./backend
+        run: ./vendor/bin/pint --test
+
+      - name: Run Test Suite (PHPUnit / Pest)
+        if: steps.check_backend.outputs.installed == 'true'
+        working-directory: ./backend
+        run: php artisan test
+
+  frontend-ci:
+    name: Frontend CI (SvelteKit)
+    needs: docs-check
+    runs-on: ubuntu-24.04
+    # Job ini diaktifkan penuh pada Fase 4 saat frontend SvelteKit telah diinstal
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Check if Frontend Installed
+        id: check_frontend
+        run: |
+          if [ -f "frontend/package.json" ]; then
+            echo "installed=true" >> $GITHUB_OUTPUT
+          else
+            echo "installed=false" >> $GITHUB_OUTPUT
+            echo "Frontend not installed yet (Fase 1 skeleton). Skipping frontend test suite."
+          fi
+
+      - name: Setup Node.js 24
+        if: steps.check_frontend.outputs.installed == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package-lock.json'
+
+      - name: Install Dependencies
+        if: steps.check_frontend.outputs.installed == 'true'
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Typecheck & Svelte Check
+        if: steps.check_frontend.outputs.installed == 'true'
+        working-directory: ./frontend
+        run: npm run check
+
+      - name: Linter Check
+        if: steps.check_frontend.outputs.installed == 'true'
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run Test Suite
+        if: steps.check_frontend.outputs.installed == 'true'
+        working-directory: ./frontend
+        run: npm run test

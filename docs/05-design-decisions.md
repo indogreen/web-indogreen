@@ -1,0 +1,112 @@
+# Keputusan Desain & Resolusi Kesenjangan (Design Decisions & Known Gaps)
+**Dokumen:** `docs/05-design-decisions.md`  
+**Proyek:** Revamp Website PT. Indogreen Technology And Management  
+**Fase:** Fase 1 — Fondasi Monorepo & Dokumen Arsitektur  
+**Status:** Ditetapkan sebagai Catatan Resmi Penyesuaian Teknis `docs/DESIGN.md`
+
+---
+
+## 1. Pendahuluan
+
+Dokumen `docs/DESIGN.md` adalah sumber kebenaran tunggal (*single source of truth*) untuk seluruh sistem visual PT. Indogreen Technology And Management. Dokumen `docs/05-design-decisions.md` ini mencatat secara formal setiap deviasi teknis yang disetujui, penyesuaian fungsional, dan resolusi atas kesenjangan desain (*Known Gaps*) yang belum tercakup dalam dokumen desain asli.
+
+---
+
+## 2. Deviasi dari `DESIGN.md` & Justifikasi Teknis
+
+### 2.1 Ikonografi: Adopsi Lucide Icons & Font Awesome 6 Free
+- **Ketentuan `DESIGN.md` (Baris 368):**
+  > "Font Awesome 6 Pro and Font Awesome 6 Sharp are used exclusively for iconography..."
+- **Deviasi yang Diputuskan:**
+  Menggunakan **Lucide Icons** sebagai pustaka ikon visual utama, dengan opsi cadangan **Font Awesome 6 Free**.
+- **Alasan Teknis & Bisnis:**
+  1. **Ketiadaan Lisensi Berbayar:** Font Awesome 6 Pro / Sharp memerlukan lisensi komersial dan token otentikasi npm privat. Repositori ini tidak memuat lisensi komersial pihak ketiga.
+  2. **Performa & Tree-Shaking SvelteKit:** Pustaka Lucide Icons berbasis komponen SVG modular yang secara native mendukung *tree-shaking* di SvelteKit. Hanya ikon yang benar-benar digunakan yang disertakan ke dalam bundle produksi (ukuran aset < 5 KB vs webfont Font Awesome > 150 KB).
+  3. **Konsistensi Visual:** Ikon Lucide memiliki ketebalan goresan (*stroke width*) 2px dan sudut geometris presisi yang selaras dengan filosofi sudut 2px (`rounded.sm`) `DESIGN.md`.
+
+---
+
+### 2.2 Penyesuaian Komponen Utility Bar
+- **Ketentuan `DESIGN.md` (Baris 542–545):**
+  > "Right-aligned cluster: locale selector / 'Login' / 'Account'. Always present at the very top of the page."
+- **Deviasi yang Diputuskan:**
+  Menghilangkan tautan konsumen *"Login"* dan *"Account"* dari bilah utilitas publik.
+- **Alasan Teknis & Fungsional:**
+  1. **Model Bisnis B2B:** Website PT. Indogreen adalah portal informasi rekayasa B2B, katalog pengadaan, dan konsultasi tender. Perusahaan tidak mengoperasikan portal keanggotaan retail pengguna (*consumer login portal*).
+  2. **Pemisahan Jalur Administrasi:** Panel CMS staf internal beroperasi di `/admin` melalui Filament CMS yang terisolasi dengan pengamanan ganda, bukan tautan login akun konsumen umum.
+  3. **Optimalisasi Ruang Navigasi:** Sisi kanan bilah utilitas dialokasikan untuk informasi operasional bernilai tinggi bagi calon mitra:
+     - Jam Layanan: `Senin - Jumat 08.30 - 17.00 WIB`
+     - Hotline Cepat WhatsApp: Direct link ke nomor resmi
+     - Email Dukungan Teknis: `support@indogreen.id`
+
+---
+
+### 2.3 Standarisasi Indikator Aksesibilitas Fokus (Focus States)
+- **Ketentuan `DESIGN.md` (Baris 496):**
+  > "Focused: same surface, border becomes 2px solid {colors.primary} — the green border is the only focus signal in the system."
+- **Deviasi yang Diputuskan:**
+  Menambahkan `outline: 2px solid #00b100; outline-offset: 2px;` di samping border hijau untuk seluruh elemen yang dapat difokuskan (input, tombol, tautan navigasi).
+- **Alasan Teknis Aksesibilitas (WCAG 2.1 AA):**
+  1. Pada beberapa peramban dan perangkat layar sentuh dengan kontras dinamis tinggi, perubahan border 1px ke 2px tanpa outline offset gagal memenuhi kriteria ambang batas persepsi kontras visual WCAG SC 2.4.7 (*Focus Visible*) dan SC 1.4.11 (*Non-text Contrast*).
+  2. Menjamin pengguna keyboard navigasi tab dapat melihat cincin fokus (*focus ring*) secara jelas baik di atas kanvas hitam (`surface-dark`) maupun kanvas putih (`canvas`).
+
+---
+
+## 3. Resolusi Kesenjangan Desain Asli (Known Gaps Resolution)
+
+Bagian *Known Gaps* pada `DESIGN.md` (Baris 636–642) mengidentifikasi beberapa area yang belum dispesifikasi. Berikut adalah aturan implementasi resmi untuk menutup celah tersebut:
+
+### 3.1 Styling Komponen Formulir Lengkap (Form Field Styling)
+`DESIGN.md` hanya mendokumentasikan inline search dan text input sederhana. Untuk formulir konsultasi/penawaran di `/kontak`:
+
+1. **Textarea (`textarea-input`):**
+   - Background: `{colors.canvas}` (`#ffffff`)
+   - Text: `{colors.ink}` (`#000000`)
+   - Border: 1px solid `{colors.hairline}` (`#cccccc`)
+   - Radius: `{rounded.sm}` (2px)
+   - Padding: 12px 16px
+   - Min Height: 120px
+   - Typography: `{typography.body-md}`
+   - State Focus: Border 2px solid `{colors.primary}` (`#00b100`) + offset outline 2px.
+2. **Select Dropdown (`select-input`):**
+   - Menggunakan style yang identik dengan `text-input`, dilengkapi glif chevron bawah (Lucide `chevron-down`) berwarna `{colors.mute}` (`#757575`) di sisi kanan.
+3. **Pesan Validasi Error Form:**
+   - Teks pesan error dirender tepat di bawah field yang bermasalah menggunakan `{typography.caption-sm}` berwarna `{colors.error}` (`#e52020`).
+   - Border input yang bermasalah berubah menjadi 1.5px solid `{colors.error}`.
+4. **Checkbox Persetujuan Privasi:**
+   - Kotak checkbox kustom 18 × 18 piksel dengan radius 2px (`rounded.sm`), border 1.5px solid `{colors.hairline-strong}`.
+   - Saat dicentang (*checked*): Background `{colors.primary}` (`#00b100`) dengan ikon centang putih.
+
+---
+
+### 3.2 Modal / Dialog Spesifikasi & Pratinjau
+Jika diperlukan modal interaktif (misal: pratinjau datasheet atau konfirmasi sukses pengiriman formulir):
+- **Backdrop Overlay:** `rgba(0, 0, 0, 0.75)` dengan efek pemblokir scroll pada body.
+- **Wadah Modal (Modal Container):**
+  - Background: `{colors.canvas}` (`#ffffff`)
+  - Border: 1px solid `{colors.hairline}` (`#cccccc`)
+  - Radius: `{rounded.sm}` (2px)
+  - Padding: 32px
+  - Ornamen: Sematkan `{component.corner-square}` 12px hijau di sudut kiri atas wadah modal.
+  - Header: `{typography.heading-xl}`
+  - Tombol Tutup: Glif silang (Lucide `x`) di kanan atas dengan area ketuk minimal 44 × 44 px.
+
+---
+
+### 3.3 Tata Letak Navigasi Mobile (Mobile Drawer Navigation)
+Untuk layar di bawah breakpoint tablet (lebar < 768px):
+- **Bilah Header Mobile:** Tinggi 64px, warna latar `#000000`, memuat ikon menu hamburger di kiri, logo INDOGREEN di tengah, dan tombol CTA singkat di kanan.
+- **Drawer Menu:**
+  - Meluncur dari sisi kanan (*slide-over drawer*) dengan lebar 85% layar (maks. 360px).
+  - Background: `{colors.surface-dark}` (`#000000`).
+  - Tautan Navigasi: Disajikan vertikal berurutan dengan `{typography.body-strong}` berwarna putih, tinggi baris 52px per link untuk menjamin target ketuk ramah jempol (*touch target* > 44px).
+  - Tombol CTA: Tombol hijau penuh (`button-primary`) di bagian bawah drawer mengarahkan ke formulir kontak.
+
+---
+
+### 3.4 Pedoman Mikro-Interaksi Hover (Hover State Guidelines)
+`DESIGN.md` menyatakan tidak ada dokumentasi hover state untuk mempertahankan karakter rekayasa CAD yang kaku. Namun untuk peramban desktop modern, diterapkan aturan mikro-interaksi halus:
+- **`button-primary`:** Hover menurunkan sedikit saturasi opasitas ke 92% (tanpa animasi translasi / transform scale).
+- **`button-outline`:** Hover memberikan warna latar tipis `{colors.surface-soft}` (`#f7f7f7`) tanpa mengubah border hijau.
+- **`product-card` & `resource-card`:** Hover mengubah border hairline dari `#cccccc` menjadi border tegas `#00b100` (tanpa shadow/elevasi mengambang).
+- **Tautan Teks Inline:** Hover memicu garis bawah (*underline*) aktif.

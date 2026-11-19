@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="Product Image Placeholder">
+  <!-- TODO-CONTENT: DUMMY PRODUCT IMAGE - REPLACE WITH 1:1 STUDIO PHOTOGRAPHY FROM PT. INDOGREEN -->
+  <rect width="800" height="800" fill="#f7f7f7" stroke="#cccccc" stroke-width="2"/>
+  <!-- Corner square token -->
+  <rect x="24" y="24" width="12" height="12" fill="#00b100"/>
+  <!-- Technical schematic icon for PJU Street Light -->
+  <g transform="translate(300, 200)" stroke="#898989" stroke-width="4" fill="none" stroke-linecap="round">
+    <!-- Pole -->
+    <line x1="100" y1="450" x2="100" y2="100"/>
+    <line x1="60" y1="450" x2="140" y2="450"/>
+    <!-- Arm -->
+    <path d="M 100 120 C 100 60, 160 50, 220 50"/>
+    <!-- Solar PV on top -->
+    <polygon points="120,40 240,10 260,30 140,60" fill="#e0e0e0" stroke="#00b100" stroke-width="3"/>
+    <!-- LED Luminaire -->
+    <rect x="200" y="55" width="50" height="20" rx="2" fill="#00b100"/>
+    <!-- Light cone rays -->
+    <line x1="210" y1="80" x2="190" y2="130" stroke="#ef9100" stroke-dasharray="4,4"/>
+    <line x1="240" y1="80" x2="260" y2="130" stroke="#ef9100" stroke-dasharray="4,4"/>
+  </g>
+  <text x="400" y="660" text-anchor="middle" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">
+    [TODO-CONTENT: DUMMY PRODUK PJU 1:1]
+  </text>
+  <text x="400" y="690" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#757575">
+    Foto Studio Lampu PJU Surya / Komponen (Min. 1200 × 1200 px)
+  </text>
+</svg>
