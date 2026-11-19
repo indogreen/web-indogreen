@@ -29,8 +29,10 @@ class InquiryFactory extends Factory
             'solution_id' => null,
             'subject' => fake()->sentence(4),
             'message_content' => fake()->paragraph(),
+            'consent' => true,
             'status' => InquiryStatus::PENDING,
             'ip_address' => fake()->ipv4(),
+            'ip_hash' => hash('sha256', fake()->ipv4()),
             'user_agent' => fake()->userAgent(),
             'internal_notes' => null,
         ];

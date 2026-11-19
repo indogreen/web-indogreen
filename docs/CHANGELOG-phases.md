@@ -156,3 +156,45 @@ Menginstal Filament CMS (v5.x kompatibel dengan Laravel 13) di direktori `backen
 - [x] Analisis statis Larastan level 5 bersih (0 error).
 - [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
 - [x] Dokumentasi `docs/02-architecture.md`, `docs/03-data-model.md`, dan `docs/CHANGELOG-phases.md` tersinkronisasi penuh.
+
+---
+
+## [Fase 4] — Backend: REST API Publik, Sanitasi & Anti-Spam (20 November 2026)
+
+### Deskripsi:
+Mengimplementasikan seluruh endpoint RESTful JSON API v1 publik (`/api/v1/*`) di `backend/` untuk melayani kebutuhan frontend SvelteKit secara decoupled. Menyediakan amplop respons terstandarisasi, kontrol CORS ketat (`FRONTEND_URL`, metode `GET`, `POST`, `OPTIONS`), pengikatan model observer untuk caching berversi (`content_version`), header `Cache-Control` & negosiasi `ETag` (HTTP 304 Not Modified), penanganan error konsisten (404, 422, 429, 500), pengiriman formulir inquiry dengan proteksi honeypot, rate limiting (5 req/menit/IP), anonimisasi `ip_hash`, serta notifikasi email queued Mailable.
+
+### Berkas yang Dibuat / Diperbarui:
+- `backend/routes/api.php`: Pendaftaran 17 rute publik ber-prefix `v1` (`home`, `settings`/`company`, `product-categories` & `{slug}`, `products` & `{category_slug}/{product_slug}` & `{slug}`, `solutions` & `{slug}`, `pages/{slug}`, `search`, `sitemap-entries`, `inquiries`, `health`).
+- `backend/bootstrap/app.php`: Pendaftaran rute API, middleware `ApiCacheMiddleware`, dan handler pengecualian kustom (404, 422, 429, 500) yang mengembalikan amplop JSON baku.
+- `backend/config/cors.php`: Pembatasan CORS eksplisit ke `FRONTEND_URL` hanya untuk metode `GET`, `POST`, `OPTIONS`, `HEAD`.
+- `backend/config/app.php`: Penambahan konfigurasi `frontend_url` dan `admin_email`.
+- `backend/database/migrations/2026_11_20_010000_update_inquiries_table_for_phase4.php`: Migrasi aditif membuat `phone_whatsapp` nullable, menambahkan `ip_hash` (VARCHAR 64), dan `consent` (BOOLEAN).
+- `backend/app/Models/Inquiry.php`: Penambahan atribut `ip_hash` dan `consent` pada `$fillable` dan `$casts`.
+- `backend/database/factories/InquiryFactory.php`: Pembaruan factory dengan data `ip_hash` dan `consent`.
+- `backend/app/Support/MediaUrlHelper.php`: Helper URL media absolut yang menangani varian WebP (`thumb`, `card`, `hero`), fallback disk publik, dan properti `alt`.
+- `backend/app/Http/Resources/`: Kumpulan API Resource terstandarisasi (`HeroSlideResource`, `CategoryResource`, `ProductListResource`, `ProductDetailResource`, `SolutionListResource`, `SolutionDetailResource`, `PageResource`, `OfficeResource`, `SiteSettingResource`).
+- `backend/app/Services/ContentCacheService.php`: Layanan manajemen caching berbasis versi konten terpusat.
+- `backend/app/Observers/ContentVersionObserver.php`: Model observer yang secara reaktif melakukan bump versi `content_version` saat entitas konten dibuat, diperbarui, atau dihapus.
+- `backend/app/Providers/AppServiceProvider.php`: Pendaftaran `ContentVersionObserver` untuk 8 model konten dan definisi rate limiter `inquiries` (5 req/menit).
+- `backend/app/Http/Middleware/ApiCacheMiddleware.php`: Middleware HTTP caching untuk GET requests dengan `Cache-Control`, `ETag`, dan negosiasi `304 Not Modified`.
+- `backend/app/Http/Requests/StoreInquiryRequest.php`: Form Request inquiry dengan validasi lengkap, alias input, batasan panjang pesan 2000 karakter, dan deteksi honeypot `website_url`.
+- `backend/app/Mail/InquiryReceivedMail.php` & `backend/resources/views/emails/inquiry-received.blade.php`: Queued Mailable notifikasi inquiry untuk tim sales engineering.
+- `backend/app/Http/Controllers/Api/`: Controller tipis berbasis `BaseApiController` (`HomeController`, `SettingController`, `CategoryController`, `ProductController`, `SolutionController`, `PageController`, `SearchController`, `SitemapController`, `InquiryController`, `HealthController`).
+- `backend/tests/Feature/Api/`: 10 berkas pengujian Pest komprehensif (`HomeApiTest`, `SettingApiTest`, `CategoryApiTest`, `ProductApiTest`, `SolutionApiTest`, `PageApiTest`, `SearchApiTest`, `SitemapApiTest`, `InquiryApiTest`, `HealthApiTest`, `CacheAndEtagTest`, `BenchmarkPerformanceTest`).
+- `docs/04-api-contract.md`: Pembaruan spesifikasi kontrak API v1 lengkap dengan contoh respons aktual seluruh endpoint dan tabel benchmark latensi.
+- `docs/03-data-model.md`: Pembaruan skema tabel `inquiries` mencatat kolom `ip_hash` dan `consent`.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 4.
+
+### Status Quality Gate:
+- [x] Seluruh endpoint publik `/api/v1` terimplementasi sesuai kontrak di `docs/04-api-contract.md`.
+- [x] API Resource menyajikan URL media absolut dengan varian ukuran dan teks alt; data hanya yang bertatus `is_active`.
+- [x] Endpoint `POST /inquiries` memvalidasi input, honeypot anti-spam, throttle 5 req/menit, anonimisasi `ip_hash`, dan queue email.
+- [x] Sistem caching respons GET beroperasi dengan kunci versi (`content_version`), `ETag`, dan respon `304 Not Modified`.
+- [x] Respons error konsisten pada status 404, 422, 429, dan 500 tanpa kebocoran stack trace.
+- [x] Kebijakan CORS dibatasi ke `FRONTEND_URL` hanya untuk metode GET dan POST.
+- [x] 69 tes Pest hijau (100% lulus, 373 assertions).
+- [x] Analisis statis Larastan level 5 bersih (0 error).
+- [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
+- [x] Benchmark latensi lokal p95 terukur di bawah 7 ms (jauh melampaui target < 200 ms).
+- [x] Dokumentasi `docs/04-api-contract.md`, `docs/03-data-model.md`, dan `docs/CHANGELOG-phases.md` tersinkronisasi penuh.

@@ -54,6 +54,10 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'frontend_url' => env('FRONTEND_URL', 'https://indogreen.id'),
+
+    'admin_email' => env('ADMIN_EMAIL', 'info@indogreen.id'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

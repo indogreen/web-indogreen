@@ -28,8 +28,10 @@ class Inquiry extends Model
         'solution_id',
         'subject',
         'message_content',
+        'consent',
         'status',
         'ip_address',
+        'ip_hash',
         'user_agent',
         'internal_notes',
     ];
@@ -43,6 +45,7 @@ class Inquiry extends Model
     {
         return [
             'status' => InquiryStatus::class,
+            'consent' => 'boolean',
         ];
     }
 

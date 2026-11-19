@@ -238,14 +238,16 @@ Penyimpanan data prospek, permohonan konsultasi teknis, dan permintaan penawaran
 | `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
 | `full_name` | `VARCHAR(255)` | Nama lengkap calon klien / narahubung |
 | `email` | `VARCHAR(255)` | Alamat email calon klien |
-| `phone_whatsapp` | `VARCHAR(50)` | Nomor kontak telepon / WhatsApp |
+| `phone_whatsapp` | `VARCHAR(50) NULL` | Nomor kontak telepon / WhatsApp (opsional) |
 | `company_organization`| `VARCHAR(255) NULL`| Nama perusahaan, instansi dinas, atau instansi tender |
 | `product_id` | `BIGINT UNSIGNED NULL` | Referensi produk terkait (`ON DELETE SET NULL`) |
 | `solution_id` | `BIGINT UNSIGNED NULL`| Referensi solusi terkait (`ON DELETE SET NULL`) |
 | `subject` | `VARCHAR(255)` | Subjek konsultasi / permohonan penawaran |
-| `message_content` | `TEXT` | Uraian kebutuhan teknis dan pesan calon klien |
+| `message_content` | `TEXT` | Uraian kebutuhan teknis dan pesan calon klien (maks 2000 karakter) |
+| `consent` | `BOOLEAN DEFAULT 1`| Persetujuan pemrosesan data (wajib dicentang oleh pengguna) |
 | `status` | `ENUM(...)` | Status prospek: `'pending'`, `'contacted'`, `'quoted'`, `'closed'`, `'archived'` (Default: `'pending'`) |
-| `ip_address` | `VARCHAR(45) NULL` | Alamat IP pengirim (untuk audit & anti-spam) |
+| `ip_address` | `VARCHAR(45) NULL` | Alamat IP pengirim terpotong/masking |
+| `ip_hash` | `VARCHAR(64) NULL` | Hash SHA-256 IP pengirim (kepatuhan privasi / PDP) |
 | `user_agent` | `TEXT NULL` | Header peramban pengirim |
 | `internal_notes` | `TEXT NULL` | Catatan internal tim sales di Filament CMS |
 | `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |

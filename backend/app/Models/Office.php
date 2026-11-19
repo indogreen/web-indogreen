@@ -9,6 +9,9 @@ use Database\Factories\OfficeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property OfficeType $office_type
+ */
 class Office extends Model
 {
     /** @use HasFactory<OfficeFactory> */
