@@ -85,7 +85,8 @@ Menginstal proyek Laravel 13 di direktori `backend/`, mengonfigurasi basis data 
 - `backend/database/seeders/`: `RolePermissionSeeder` (idempotent, 8 permissions, role `admin` & `editor`), `AdminUserSeeder` (kredensial dari env), `CategorySeeder` (4 kategori dari docs/06), `ProductSeeder` (4 PJU seri dengan spesifikasi teknis), `SolutionSeeder` (5 solusi EBT), `CompanySettingSeeder`, dan `DatabaseSeeder`.
 - `backend/tests/Feature/`: 5 berkas pengujian Pest (`ModelRelationTest`, `ScopeAndSlugTest`, `FactoryTest`, `RolePermissionTest`, `DatabaseSeederTest`, `MediaLibraryTest`) mencakup 23 test case dengan 84 assertion.
 - `backend/phpstan.neon`: Konfigurasi Larastan level 5 dengan eksekusi stabil.
-- `.github/workflows/ci.yml`: Aktivasi penuh job `backend-ci` (Pint style check, Larastan static analysis, dan Pest test suite).
+- `backend/phpunit.xml`: Penambahan `APP_KEY` khusus testing environment untuk menjamin kestabilan runner tanpa dependensi berkas host.
+- `.github/workflows/ci.yml`: Aktivasi penuh job `backend-ci` (penyalinan `.env` otomatis, `key:generate`, Pint style check, Larastan static analysis, dan Pest test suite).
 - `docs/02-architecture.md`: Penjelasan alasan pemilihan setiap paket dan trait slug kustom di seksi 7.
 - `docs/03-data-model.md`: Dokumentasi matriks peran-izin default, konfigurasi koleksi dan konversi Spatie Media Library, serta rincian enum PHP.
 - `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 2.

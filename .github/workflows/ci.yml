@@ -68,6 +68,13 @@ jobs:
         working-directory: ./backend
         run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
+      - name: Prepare Environment File
+        if: steps.check_backend.outputs.installed == 'true'
+        working-directory: ./backend
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       - name: Run Code Style Check (Laravel Pint)
         if: steps.check_backend.outputs.installed == 'true'
         working-directory: ./backend
