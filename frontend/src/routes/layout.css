@@ -1,0 +1,19 @@
+@import 'tailwindcss';
+@import '../lib/styles/tokens.css';
+
+/* Default global base styles */
+html {
+	font-family: var(--font-family-primary);
+	color: var(--color-ink);
+	background-color: var(--color-canvas);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: var(--font-family-primary);
+	background-color: var(--color-canvas);
+	color: var(--color-ink);
+}

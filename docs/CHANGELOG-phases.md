@@ -198,3 +198,57 @@ Mengimplementasikan seluruh endpoint RESTful JSON API v1 publik (`/api/v1/*`) di
 - [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
 - [x] Benchmark latensi lokal p95 terukur di bawah 7 ms (jauh melampaui target < 200 ms).
 - [x] Dokumentasi `docs/04-api-contract.md`, `docs/03-data-model.md`, dan `docs/CHANGELOG-phases.md` tersinkronisasi penuh.
+
+---
+
+## [Fase 5] — Frontend: Fondasi, Token Desain, Komponen UI (20 November 2026)
+
+### Deskripsi:
+Menginisialisasi aplikasi SvelteKit (Svelte 5 runes, TypeScript mode strict) di direktori `frontend/` menggunakan `@sveltejs/adapter-node`, Tailwind CSS v4, ESLint, Prettier, `svelte-check`, Vitest, dan `@testing-library/svelte`. Menerjemahkan seluruh token desain dari `docs/DESIGN.md` dan `docs/05-design-decisions.md` ke dalam `src/lib/styles/tokens.css` (warna, 18 skala tipografi `display-xl` hingga `utility-xs`, spasi berorientasi grid 8px, batas radius 2px, breakpoint responsif, container 1280px). Mengintegrasikan font mandiri Inter 400 & 700 (@fontsource/inter) dengan `font-display: swap` dan fallback Arial. Membangun 14 komponen UI atomik & molekuler di `src/lib/components/ui/` bebas dari nilai heksadesimal atau piksel lepas (*zero loose hex/px*). Menyediakan rute panduan gaya dev-only `/styleguide` yang memblokir akses di produksi (HTTP 404), menulis 10 berkas pengujian komponen Vitest (37 pengujian, 100% lulus), dan mengaktifkan build check serta verifikasi CI frontend.
+
+### Berkas yang Dibuat / Diperbarui:
+- `frontend/`: Inisialisasi struktur proyek SvelteKit lengkap (`package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`, `eslint.config.js`, `prettier.config.js`, `.npmrc`, `.gitignore`, `.prettierignore`, `README.md`).
+- `frontend/src/lib/styles/tokens.css`: Definisi variabel CSS `:root`, tema Tailwind (`@theme`), 18 kelas utilitas skala tipografi (`.type-display-xl` s.d. `.type-utility-xs`), spasi grid (`--spacing-*`), radius (`--radius-sm: 2px`), breakpoint responsif, kelas utilitas container (`.container-max`), padding seksi responsif (`.section-padding`), dan indikator fokus aksesibilitas (`.focus-ring`).
+- `frontend/src/lib/components/ui/types.ts`: Definisi antarmuka dan tipe data TypeScript untuk seluruh komponen UI, varian tombol, tone seksi, posisi ornamen brand, dan model tab.
+- `frontend/src/lib/components/ui/`:
+  - `Icon.svelte`: Komponen ikon SVG berbasis pustaka modular `@lucide/svelte` dengan ketebalan goresan 2px seragam.
+  - `Button.svelte`: Tombol CTA dan tautan navigasi dengan 4 varian (`primary`, `outline`, `outline-on-dark`, `ghost-link`), 3 ukuran (`sm`, `md`, `lg`), tinggi sentuh minimal 44px, teks tombol hijau hitam pekat (`#000000`), dan radius sudut 2px.
+  - `TextInput.svelte`: Input teks 44px dengan radius 2px, cincin fokus aksesibilitas WCAG, state error dengan atribut ARIA (`aria-invalid`, `aria-describedby`, `role="alert"`).
+  - `Textarea.svelte`: Area teks multi-baris tinggi minimal 120px dengan penanganan error dan cincin fokus.
+  - `Select.svelte`: Dropdown pilihan asli dengan ikon chevron-down, penanganan error, dan cincin fokus.
+  - `Badge.svelte`: Lencana status geometris dengan tipografi `caption-md` kapital dan radius 2px.
+  - `PillTabs.svelte`: Kontrol tab tersegmentasi beradius 2px (bukan pill/oval), navigasi panah keyboard, dan atribut aksesibilitas WAI-ARIA `role="tablist"` / `role="tab"`.
+  - `CornerSquare.svelte`: Motif ornamen sudut khas INDOGREEN 12 × 12 piksel berwarna hijau solid di sudut kiri atas atau kanan bawah.
+  - `ProductCard.svelte`: Kartu katalog produk dengan batas hairline 1px datar, ornamen sudut hijau di kiri atas, tanpa drop-shadow, dan batas fokus hover hijau.
+  - `FeatureCard.svelte`: Kartu fitur layanan dengan ikon 24px hijau, batas hairline datar, dan tipografi rapi.
+  - `ResourceCard.svelte`: Kartu unduhan dokumen/datasheet dengan lencana tipe file, ornamen sudut, dan tautan aksi berpanah.
+  - `CalloutStat.svelte`: Blok angka metrik `display-lg` hijau dengan label keterangan di bawahnya.
+  - `Container.svelte`: Pembungkus tata letak horizontal responsif dengan lebar maksimal 1280px.
+  - `Section.svelte`: Pembungkus seksi halaman dengan 3 pilihan tone warna (`light`, `dark`, `soft`) dan padding vertikal responsif (64px desktop / 48px tablet / 32px mobile).
+- `frontend/src/lib/components/ui/index.ts` & `frontend/src/lib/index.ts`: Ekspor publik barrel untuk seluruh komponen dan tipe data UI.
+- `frontend/src/routes/+layout.svelte`: Shell tata letak global yang mengimpor `tokens.css` dan font Inter.
+- `frontend/src/routes/+page.svelte`: Halaman beranda pengembangan yang mengarahkan pengembang ke rute `/styleguide`.
+- `frontend/src/routes/styleguide/+page.server.ts`: Penjaga rute dev-only yang memicu HTTP 404 saat `!dev` di lingkungan produksi.
+- `frontend/src/routes/styleguide/+page.svelte`: Halaman showcase panduan gaya interaktif komprehensif yang menampilkan seluruh palet warna, 18 tingkatan tipografi, tombol di atas kanvas terang dan gelap, input formulir, badge, tabs, kartu-kartu, dan callout statistik.
+- `frontend/src/lib/components/ui/__tests__/`: 10 berkas pengujian Vitest (`Button.test.ts`, `TextInput.test.ts`, `Textarea.test.ts`, `Select.test.ts`, `Badge.test.ts`, `PillTabs.test.ts`, `CornerSquare.test.ts`, `Cards.test.ts`, `Layout.test.ts`, `Icon.test.ts`) mencakup 37 test case.
+- `.github/workflows/ci.yml`: Pembaruan komentar pengaktifan Fase 5 dan penambahan langkah verifikasi `Build Check` (`npm run build`) pada job `frontend-ci`.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 5.
+
+### Status Quality Gate:
+- [x] SvelteKit (Svelte 5, TypeScript strict) terpasang di `frontend/` dengan `@sveltejs/adapter-node` dan Tailwind CSS v4.
+- [x] Front matter `DESIGN.md` diterjemahkan secara presisi ke `src/lib/styles/tokens.css` (warna, 18 skala tipografi, spasi 8px, radius 2px, container 1280px).
+- [x] Self-hosted font Inter 400 & 700 aktif dengan `font-display: swap` dan fallback Arial.
+- [x] Ikonografi terstandarisasi via pustaka Lucide Icons (`@lucide/svelte`) melalui komponen `Icon.svelte`.
+- [x] 14 komponen UI atomik & molekuler dibangun dan diekspor di `src/lib/components/ui/`.
+- [x] Nol warna heksadesimal lepas atau ukuran piksel lepas di seluruh komponen UI (`src/lib/components/ui/`).
+- [x] Tidak ada drop-shadow pada kartu (hanya batas hairline 1px datar).
+- [x] Tidak ada radius di atas 2px (`rounded-sm`) pada tombol, kartu, input, maupun tabs (tidak ada pill button).
+- [x] Teks pada tombol hijau primer (`Button` variant `primary`) berwarna hitam pekat (`#000000`).
+- [x] Aksen kuning hanya diaplikasikan pada permukaan gelap dan tidak pernah sebagai warna isian CTA.
+- [x] Rute dev-only `/styleguide` selesai dan otomatis mengembalikan HTTP 404 pada build produksi.
+- [x] 37 tes unit komponen Vitest lulus hijau (100%).
+- [x] Pemeriksaan tipe `npm run check` (svelte-check) bersih (0 error, 0 warning).
+- [x] Pemeriksaan linter `npm run lint` (ESLint & Prettier) bersih (0 error, 0 warning).
+- [x] Build produksi SSR `npm run build` sukses tanpa galat.
+- [x] Job CI frontend di GitHub Actions diperbarui dan siap dieksekusi.
+- [x] Seluruh dokumentasi tersinkronisasi.
