@@ -66,3 +66,42 @@ Menyiapkan kerangka repositori monorepo, dokumen arsitektur teknis menyeluruh, d
 - [x] `.env.example` backend & frontend bebas dari rahasia; `.nvmrc` disetel ke 24.
 - [x] `.editorconfig`, `.gitignore`, dan CI workflow siap pakai.
 - [x] Tanpa instalasi Laravel/SvelteKit, tanpa Docker/kontainer apa pun.
+
+---
+
+## [Fase 2] — Backend: Fondasi Laravel, Skema Data, Peran & Izin (19 November 2026)
+
+### Deskripsi:
+Menginstal proyek Laravel 13 di direktori `backend/`, mengonfigurasi basis data MySQL lokal, sistem berkas media Spatie, otorisasi RBAC Spatie, model Eloquent beserta relasi dan casting, trait kustom `HasSlug`, `HasActiveScope`, dan `HasSortOrderScope`, enum PHP `InquiryStatus` dan `OfficeType`, seeder idempotent lengkap, 23 pengujian otomatis berbasis Pest, analisis statis Larastan, pemeriksaan gaya kode Laravel Pint, serta pengaktifan job CI backend di GitHub Actions.
+
+### Berkas yang Dibuat / Diperbarui:
+- `backend/`: Inisialisasi proyek Laravel 13 lengkap (`app/`, `config/`, `database/`, `routes/`, `tests/`, `composer.json`, `composer.lock`).
+- `backend/.env.example` & `backend/.env`: Konfigurasi timezone `Asia/Jakarta`, locale `id`, fallback `en`, faker `id_ID`, DB MySQL `indogreen_db`, mail driver log/mailpit, APP_URL, FRONTEND_URL, dan kredensial admin default.
+- `backend/app/Enums/InquiryStatus.php` & `backend/app/Enums/OfficeType.php`: Enum PHP dengan label multibahasa Indonesia.
+- `backend/app/Models/Traits/`: Trait `HasSlug` (auto-slug unik & URL stabil saat diedit), `HasActiveScope` (`scopeActive`), dan `HasSortOrderScope` (`scopeOrdered`).
+- `backend/app/Models/`: Model `User` (dengan `HasRoles`), `Category`, `Product`, `ProductSpecification`, `Solution`, `Inquiry`, dan `CompanySetting`.
+- `backend/database/migrations/`: Migrasi 11 tabel (`users`, `cache`, `jobs`, `media`, `permission_tables`, `categories`, `products`, `product_specifications`, `solutions`, `inquiries`, `company_settings`) lengkap dengan indeks komposit, indeks unik slug, dan foreign key cascade/set null.
+- `backend/database/factories/`: Factory untuk seluruh 7 model dengan data pengujian representatif.
+- `backend/database/seeders/`: `RolePermissionSeeder` (idempotent, 8 permissions, role `admin` & `editor`), `AdminUserSeeder` (kredensial dari env), `CategorySeeder` (4 kategori dari docs/06), `ProductSeeder` (4 PJU seri dengan spesifikasi teknis), `SolutionSeeder` (5 solusi EBT), `CompanySettingSeeder`, dan `DatabaseSeeder`.
+- `backend/tests/Feature/`: 5 berkas pengujian Pest (`ModelRelationTest`, `ScopeAndSlugTest`, `FactoryTest`, `RolePermissionTest`, `DatabaseSeederTest`, `MediaLibraryTest`) mencakup 23 test case dengan 84 assertion.
+- `backend/phpstan.neon`: Konfigurasi Larastan level 5 dengan eksekusi stabil.
+- `.github/workflows/ci.yml`: Aktivasi penuh job `backend-ci` (Pint style check, Larastan static analysis, dan Pest test suite).
+- `docs/02-architecture.md`: Penjelasan alasan pemilihan setiap paket dan trait slug kustom di seksi 7.
+- `docs/03-data-model.md`: Dokumentasi matriks peran-izin default, konfigurasi koleksi dan konversi Spatie Media Library, serta rincian enum PHP.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 2.
+
+### Status Quality Gate:
+- [x] Laravel 13 terpasang di `backend/` dengan timezone `Asia/Jakarta` dan locale `id`.
+- [x] Paket minimal terpasang (`spatie/laravel-medialibrary`, `spatie/laravel-permission`, `laravel/pint`, `larastan`, `pestphp/pest`).
+- [x] Trait `HasSlug` menghasilkan slug unik dan stabil (tidak berubah saat nama diedit).
+- [x] Seluruh skema migrasi tabel, relasi, cast, dan factory dari `docs/03-data-model.md` telah dibuat.
+- [x] Tabel `users` bersih tanpa kolom `role`; peran dikelola Spatie RBAC.
+- [x] Konfigurasi Media Library (`category_image`, `product_gallery`, `product_datasheet`, `solution_image`, `hero_desktop`, `hero_mobile`) dengan konversi WebP dan batasan MIME type.
+- [x] Enum PHP `InquiryStatus` dan `OfficeType` terdefinisi dan di-cast pada model.
+- [x] `RolePermissionSeeder` idempotent dan mereset cache permission (8 izin, peran admin & editor).
+- [x] Seeder minimal sukses mengeksekusi `migrate:fresh --seed` tanpa error.
+- [x] Seluruh 23 tes Pest hijau (100% lulus).
+- [x] Analisis statis Larastan level 5 bersih (0 error).
+- [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
+- [x] CI workflow GitHub Actions terkonfigurasi untuk backend.
+- [x] Dokumentasi `docs/02-architecture.md` dan `docs/03-data-model.md` tersinkronisasi penuh.

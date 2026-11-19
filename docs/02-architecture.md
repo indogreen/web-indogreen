@@ -115,15 +115,25 @@ flowchart TD
 
 ---
 
-## 7. Keputusan Arsitektur & Justifikasi Teknis
+## 7. Keputusan Arsitektur & Justifikasi Teknis Paket Backend (Fase 2)
 
-1. **Filament CMS v3:**
-   - *Alasan:* Filament dibangun di atas TALL stack (Tailwind, Alpine, Laravel, Livewire) yang terintegrasi secara native dengan model Eloquent Laravel. Memungkinkan pembuatan panel administrasi yang aman, cepat, dan modern tanpa perlu membangun aplikasi dashboard terpisah dari nol.
-2. **Spatie Laravel Permission (`spatie/laravel-permission`):**
-   - *Alasan:* Standar industri untuk otorisasi Laravel. Menggunakan tabel relasi terpisah (`roles`, `permissions`, `model_has_roles`) sehingga tabel `users` tetap bersih tanpa kolom role statis yang kaku.
-3. **MySQL Server 8.0:**
-   - *Alasan:* Menyediakan dukungan fungsi JSON native performa tinggi, Common Table Expressions (CTE), dan integritas transaksional yang matang untuk data katalog teknik dan penawaran.
-4. **Deploy Tanpa Docker:**
+Paket-paket yang dipasang pada aplikasi backend `backend/` dibatasi hanya pada pustaka inti yang esensial:
+
+1. **`spatie/laravel-permission` (v8.x):**
+   - *Alasan:* Mengelola Role-Based Access Control (RBAC) secara deklaratif melalui tabel polimorfik relasional (`roles`, `permissions`, `model_has_roles`). Menjaga tabel `users` tetap bersih tanpa kolom role kaku dan memfasilitasi audit otorisasi yang fleksibel.
+2. **`spatie/laravel-medialibrary` (v11.x):**
+   - *Alasan:* Menangani asosiasi media berkas (gambar hero desktop/mobile, galeri produk, flyer diagram solusi, dan berkas datasheet PDF) ke model Eloquent. Menyediakan konversi otomatis gambar ke format WebP (thumb 200px, card 600px, hero 1920px), pembatasan MIME type ketat, serta penyimpanan atribut alt text melalui custom properties.
+3. **`laravel/pint` (v1.x - Dev):**
+   - *Alasan:* Penyeragaman gaya penulisan kode PHP berbasis standar Laravel/PSR-12 secara otomatis dan deterministik dalam CI quality gate.
+4. **`larastan/larastan` (v3.x - Dev):**
+   - *Alasan:* Ekstensi PHPStan khusus framework Laravel untuk analisis kode statis tingkat 5, mendeteksi potensi bug tipe data, query Eloquent invalid, dan null pointer sebelum kode dieksekusi.
+5. **`pestphp/pest` & `pestphp/pest-plugin-laravel` (v4.x - Dev):**
+   - *Alasan:* Framework pengujian modern dengan sintaks deklaratif yang ringkas dan ekspresif untuk menguji relasi model, scope, slug, factory, otorisasi RBAC, dan idempotensi seeder secara komprehensif.
+6. **Trait Kustom `HasSlug` (Tanpa Paket Eksternal Tambahan):**
+   - *Alasan:* Menghindari dependensi paket slug eksternal yang membengkakkan codebase. Menggunakan `Illuminate\Support\Str::slug` di dalam trait internal `app/Models/Traits/HasSlug.php`. Trait ini menjamin slug otomatis dibuat saat entitas diciptakan, menangani tabrakan nama dengan suffix unik numerik (`-1`, `-2`), dan secara tegas **TIDAK mengubah slug saat nama entitas diedit** guna menjamin stabilitas URL dan reputasi SEO.
+7. **Filament CMS v3 (Direncanakan untuk Fase CMS):**
+   - *Alasan:* Panel administrasi TALL stack modern terintegrasi native dengan Eloquent dan Spatie permission.
+8. **Deploy Tanpa Docker:**
    - *Alasan:* Menghilangkan overhead virtualisasi kontainer pada server Ubuntu 24.04. Seluruh proses dikelola langsung oleh init system bawaan Linux (`systemd`), menghasilkan konsumsi RAM yang jauh lebih hemat (< 1 GB) dan latensi I/O disk yang optimal.
 
 ---

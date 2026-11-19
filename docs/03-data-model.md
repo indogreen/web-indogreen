@@ -278,19 +278,58 @@ Dihasilkan otomatis melalui migrasi bawaan Spatie:
 - `model_has_permissions` (`permission_id`, `model_type`, `model_id`)
 - `role_has_permissions` (`permission_id`, `role_id`)
 
+#### Matriks Peran & Izin Default (Role-Permission Matrix)
+Berikut adalah matriks peran dan izin baku yang diterapkan pada `RolePermissionSeeder` dan dapat disesuaikan:
+
+| Izin (Permission) | Deskripsi Hak Akses | Peran `admin` | Peran `editor` |
+|---|---|:---:|:---:|
+| `access-admin` | Mengakses dashboard administratif panel CMS | ✅ | ✅ |
+| `content.manage` | Membuat, mengedit, menghapus kategori, produk, solusi, & spesifikasi | ✅ | ✅ |
+| `settings.manage` | Memperbarui profil perusahaan & konfigurasi situs (`company_settings`) | ✅ | ❌ |
+| `inquiries.view` | Melihat data kontak prospek dan formulir penawaran masuk | ✅ | ✅ |
+| `inquiries.update` | Memperbarui status prospek dan catatan internal sales | ✅ | ✅ |
+| `inquiries.delete` | Menghapus permanen atau mengarsipkan inquiry | ✅ | ❌ |
+| `users.manage` | Mengelola akun pengguna internal staf | ✅ | ❌ |
+| `roles.manage` | Mengatur hak akses peran dan izin Spatie | ✅ | ❌ |
+
+---
+
+### 3.9 Konfigurasi Spatie Media Library & Konversi WebP
+Seluruh aset media dikaitkan ke model Eloquent via `spatie/laravel-medialibrary` dengan koleksi terdaftar:
+
+| Koleksi Media | Model Pemilik | Batasan MIME Type | Konversi Otomatis (WebP) | Custom Property |
+|---|---|---|---|---|
+| `category_image` | `Category` | `image/jpeg`, `image/png`, `image/webp` | `thumb` (200×200), `card` (600×600), `hero` (1920×1080) | `alt` (Alt text aksesibilitas) |
+| `product_gallery` | `Product` | `image/jpeg`, `image/png`, `image/webp` | `thumb` (200×200), `card` (600×600), `hero` (1920×1080) | `alt` (Alt text aksesibilitas) |
+| `product_datasheet` | `Product` | `application/pdf` | Tanpa konversi raster (berkas unduhan murni) | `title`, `description` |
+| `solution_image` | `Solution` | `image/jpeg`, `image/png`, `image/webp`, `image/svg+xml` | `thumb` (200×200), `card` (600×600), `hero` (1920×1080) | `alt` (Alt text aksesibilitas) |
+| `hero_desktop` | `Product`, `Solution`, `CompanySetting` | `image/jpeg`, `image/png`, `image/webp` | `thumb` (200×200), `card` (600×600), `hero` (1920×1080) | `alt` (Alt text aksesibilitas) |
+| `hero_mobile` | `Product`, `Solution`, `CompanySetting` | `image/jpeg`, `image/png`, `image/webp` | `thumb` (200×200), `card` (600×600), `hero` (1920×1080) | `alt` (Alt text aksesibilitas) |
+
+---
+
+### 3.10 Enum PHP yang Digunakan
+1. **`App\Enums\InquiryStatus`**:
+   - Nilai: `'pending'` (Menunggu Ditinjau), `'contacted'` (Sudah Dihubungi), `'quoted'` (Penawaran Terkirim), `'closed'` (Selesai), `'archived'` (Diarsipkan).
+2. **`App\Enums\OfficeType`**:
+   - Nilai: `'head_office'` (Kantor Utama), `'representative_office'` (Kantor Perwakilan).
+
 ---
 
 ## 4. Rencana Seeder Awal (Initial Seeding Strategy)
 
-1. **`RoleAndPermissionSeeder`:**
-   - Membuat peran `super_admin`, `content_editor`, `sales_officer`.
-   - Membuat akun default Super Admin awal dengan kredensial lingkungan lokal aman.
-2. **`CategorySeeder`:**
+1. **`RolePermissionSeeder`:**
+   - Idempotent dan mereset cache permission (`forgetCachedPermissions`).
+   - Membuat 8 izin resmi dan 2 peran inti (`admin` dan `editor`) sesuai matriks otorisasi.
+2. **`AdminUserSeeder`:**
+   - Mengambil kredensial dari environment (`ADMIN_NAME`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`).
+   - Menetapkan peran `admin` secara otomatis pada akun yang dibuat/diperbarui.
+3. **`CategorySeeder`:**
    - Menginisialisasi 4 kategori resmi: `pju-tenaga-surya`, `plts-residential`, `solar-home-system`, `aksesoris-kelistrikan`.
-3. **`ProductSeeder`:**
+4. **`ProductSeeder`:**
    - Memasukkan 4 seri produk riil eksisting: `pju-two-in-one-helios-series`, `pju-two-in-one-jupiter-series`, `pju-two-in-one-mars-series`, `pju-all-in-one-mars-series`.
    - Menyertakan data spesifikasi teknis awal ke dalam `product_specifications`.
-4. **`SolutionSeeder`:**
+5. **`SolutionSeeder`:**
    - Menginisialisasi 5 solusi EBT: `plts-on-grid`, `plts-on-grid-hybrid`, `plts-off-grid`, `plts-off-grid-hybrid`, `backup-power-ups`.
-5. **`CompanySettingSeeder`:**
+6. **`CompanySettingSeeder`:**
    - Memasukkan data terverifikasi (Telepon Bogor, Email `support@indogreen.id`, Alamat Bogor & Gandaria 8) serta penanda `TODO-CONTENT` untuk aset yang belum disahkan.
