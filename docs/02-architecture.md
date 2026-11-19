@@ -131,8 +131,8 @@ Paket-paket yang dipasang pada aplikasi backend `backend/` dibatasi hanya pada p
    - *Alasan:* Framework pengujian modern dengan sintaks deklaratif yang ringkas dan ekspresif untuk menguji relasi model, scope, slug, factory, otorisasi RBAC, dan idempotensi seeder secara komprehensif.
 6. **Trait Kustom `HasSlug` (Tanpa Paket Eksternal Tambahan):**
    - *Alasan:* Menghindari dependensi paket slug eksternal yang membengkakkan codebase. Menggunakan `Illuminate\Support\Str::slug` di dalam trait internal `app/Models/Traits/HasSlug.php`. Trait ini menjamin slug otomatis dibuat saat entitas diciptakan, menangani tabrakan nama dengan suffix unik numerik (`-1`, `-2`), dan secara tegas **TIDAK mengubah slug saat nama entitas diedit** guna menjamin stabilitas URL dan reputasi SEO.
-7. **Filament CMS v3 (Direncanakan untuk Fase CMS):**
-   - *Alasan:* Panel administrasi TALL stack modern terintegrasi native dengan Eloquent dan Spatie permission.
+7. **`filament/filament` (v5.x):**
+   - *Alasan:* Panel administrasi TALL stack modern yang terintegrasi secara native dengan Laravel 13, Livewire v4, dan Spatie Permission. Mengizinkan staf non-teknis mengelola seluruh konten (Hero slides, Kategori, Produk dengan repeater spesifikasi, Solusi, Halaman, Kantor, Inquiry, Pengguna, Peran, dan Pengaturan Situs) dengan pengamanan hak akses `access-admin` melalui `User::canAccessPanel()`, perlindungan terhadap penghapusan admin terakhir, serta sanitasi HTML otomatis tanpa memerlukan plugin pihak ketiga tambahan.
 8. **Deploy Tanpa Docker:**
    - *Alasan:* Menghilangkan overhead virtualisasi kontainer pada server Ubuntu 24.04. Seluruh proses dikelola langsung oleh init system bawaan Linux (`systemd`), menghasilkan konsumsi RAM yang jauh lebih hemat (< 1 GB) dan latensi I/O disk yang optimal.
 

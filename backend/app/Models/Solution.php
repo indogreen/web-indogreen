@@ -5,9 +5,12 @@ namespace App\Models;
 use App\Models\Traits\HasActiveScope;
 use App\Models\Traits\HasSlug;
 use App\Models\Traits\HasSortOrderScope;
+use App\Services\HtmlSanitizerService;
 use Database\Factories\SolutionFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -32,6 +35,8 @@ class Solution extends Model implements HasMedia
         'included_components',
         'benefits',
         'diagram_image',
+        'seo_title',
+        'seo_description',
         'is_active',
         'sort_order',
     ];
@@ -52,6 +57,18 @@ class Solution extends Model implements HasMedia
     }
 
     /**
+     * Sanitize system_architecture before saving.
+     *
+     * @return Attribute<string|null, string|null>
+     */
+    protected function systemArchitecture(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => HtmlSanitizerService::sanitize($value),
+        );
+    }
+
+    /**
      * Solution has many inquiries.
      *
      * @return HasMany<Inquiry, $this>
@@ -59,6 +76,18 @@ class Solution extends Model implements HasMedia
     public function inquiries(): HasMany
     {
         return $this->hasMany(Inquiry::class);
+    }
+
+    /**
+     * Solution can be associated with many Products.
+     *
+     * @return BelongsToMany<Product, $this>
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'product_solution')
+            ->withPivot('sort_order')
+            ->orderByPivot('sort_order', 'asc');
     }
 
     /**

@@ -5,11 +5,14 @@ namespace App\Models;
 use App\Models\Traits\HasActiveScope;
 use App\Models\Traits\HasSlug;
 use App\Models\Traits\HasSortOrderScope;
+use App\Services\HtmlSanitizerService;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -33,6 +36,8 @@ class Product extends Model implements HasMedia
         'badge_tag',
         'short_description',
         'full_description',
+        'seo_title',
+        'seo_description',
         'featured_image',
         'datasheet_pdf',
         'is_featured',
@@ -52,6 +57,18 @@ class Product extends Model implements HasMedia
             'is_active' => 'boolean',
             'sort_order' => 'integer',
         ];
+    }
+
+    /**
+     * Sanitize full_description before saving.
+     *
+     * @return Attribute<string|null, string|null>
+     */
+    protected function fullDescription(): Attribute
+    {
+        return Attribute::make(
+            set: fn (?string $value) => HtmlSanitizerService::sanitize($value),
+        );
     }
 
     /**
@@ -93,6 +110,18 @@ class Product extends Model implements HasMedia
     public function inquiries(): HasMany
     {
         return $this->hasMany(Inquiry::class);
+    }
+
+    /**
+     * Product can be associated with many Solutions.
+     *
+     * @return BelongsToMany<Solution, $this>
+     */
+    public function solutions(): BelongsToMany
+    {
+        return $this->belongsToMany(Solution::class, 'product_solution')
+            ->withPivot('sort_order')
+            ->orderByPivot('sort_order', 'asc');
     }
 
     /**

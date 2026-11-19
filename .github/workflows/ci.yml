@@ -83,7 +83,7 @@ jobs:
       - name: Run Static Analysis (Larastan)
         if: steps.check_backend.outputs.installed == 'true'
         working-directory: ./backend
-        run: ./vendor/bin/phpstan analyse --no-progress
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Run Test Suite (Pest)
         if: steps.check_backend.outputs.installed == 'true'

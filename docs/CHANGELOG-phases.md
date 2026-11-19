@@ -106,3 +106,53 @@ Menginstal proyek Laravel 13 di direktori `backend/`, mengonfigurasi basis data 
 - [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
 - [x] CI workflow GitHub Actions terkonfigurasi untuk backend.
 - [x] Dokumentasi `docs/02-architecture.md` dan `docs/03-data-model.md` tersinkronisasi penuh.
+
+---
+
+## [Fase 3] — Backend: Admin CMS (Filament) (19 November 2026)
+
+### Deskripsi:
+Menginstal Filament CMS (v5.x kompatibel dengan Laravel 13) di direktori `backend/`, mengonfigurasi panel administratif di rute `/admin` yang diproteksi secara ketat oleh izin `access-admin` melalui `User::canAccessPanel()`, membuat 9 resource Filament lengkap (`HeroSlide`, `ProductCategory`, `Product`, `Solution`, `Page`, `Office`, `Inquiry`, `User`, `Role`), membuat halaman pengaturan situs terdedikasi (`ManageSiteSettings`), mengonfigurasi policy berbasis Spatie permission dengan perlindungan admin terakhir, menerapkan sanitasi HTML otomatis saat simpan pada atribut rich text, serta menambahkan pengujian Pest (total 48 test case, 177 assertion) yang seluruhnya lulus hijau.
+
+### Berkas yang Dibuat / Diperbarui:
+- `backend/composer.json` & `backend/composer.lock`: Menambahkan dependensi `filament/filament` (v5.x).
+- `backend/app/Providers/Filament/AdminPanelProvider.php`: Konfigurasi panel default `/admin` dengan autentikasi session, penemuan otomatis resources/pages/widgets, dan tema default Filament tanpa modifikasi token desain situs publik.
+- `backend/app/Models/User.php`: Mengimplementasikan antarmuka `FilamentUser` dan metode `canAccessPanel(Panel $panel): bool` memeriksa `can('access-admin')`.
+- `backend/database/migrations/2026_11_19_230000_create_phase3_cms_tables.php`: Migrasi aditif tabel `hero_slides`, `pages`, `offices`, `site_settings`, pivot `product_solution`, serta kolom `seo_title` (60) dan `seo_description` (160) pada `products` dan `solutions`.
+- `backend/app/Models/`: Model baru `HeroSlide`, `Page`, `Office`, `SiteSetting` beserta mutator sanitasi HTML dan relasi many-to-many `Product::solutions()` dan `Solution::products()`.
+- `backend/app/Services/HtmlSanitizerService.php`: Layanan sanitasi HTML yang secara agresif membersihkan blok `<script>`, `<style>`, event handler JavaScript (`onclick`, `onload`, dll.), dan skema `javascript:`, serta membatasi elemen hanya pada tag aman yang diizinkan (*whitelist*).
+- `backend/app/Policies/`: Policy otorisasi Spatie (`CategoryPolicy`, `ProductPolicy`, `SolutionPolicy`, `HeroSlidePolicy`, `PagePolicy`, `OfficePolicy` terikat `content.manage`; `InquiryPolicy` terikat `inquiries.view`, `inquiries.update`, `inquiries.delete`; `UserPolicy` terikat `users.manage` dengan perlindungan admin terakhir; `RolePolicy` terikat `roles.manage` dengan perlindungan larangan menghapus peran `admin`).
+- `backend/app/Providers/AppServiceProvider.php`: Pendaftaran eksplisit `Gate::policy(Role::class, RolePolicy::class)`.
+- `backend/app/Filament/Resources/`:
+  - `HeroSlides/`: Form judul, subjudul, tombol CTA, upload gambar desktop & mobile (Maks 2MB, WebP/JPG/PNG), status aktif, dan tabel *reorderable*.
+  - `Categories/`: Form nama, slug unik stabil, deskripsi, ikon Lucide, urutan, status aktif, dan tabel reorderable.
+  - `Products/`: Form berstruktur 5 Tab (Umum, Spesifikasi teknis dengan Repeater parameter/nilai/satuan terurut, Fitur dengan RichEditor dan Ringkasan, Media dengan gambar utama dan datasheet PDF, SEO dengan indikator batas 60 dan 160 karakter).
+  - `Solutions/`: Form nama, tipe sistem EBT, relasi multi-select ke produk, ringkasan, arsitektur sistem RichEditor, TagsInput komponen & keuntungan, diagram gambar, SEO, dan tabel penayangan.
+  - `Pages/`: Form judul, slug unik stabil, RichEditor konten tersanitasi, SEO, dan status aktif.
+  - `Offices/`: Form nama kantor, dropdown enum `OfficeType`, alamat fisik, telepon, email, embed peta Google Maps, urutan, dan status aktif.
+  - `Inquiries/`: Form hanya-baca untuk seluruh data pengirim (nama, perusahaan, email, telp, pesan, produk/solusi terkait) dengan hak edit terbatas pada `status` dan `internal_notes`. Pembuatan manual dinonaktifkan (`canCreate => false`).
+  - `Users/`: Form akun staf dan penetapan peran (Role) dengan aturan validasi khusus pencegah pencabutan peran dari admin terakhir.
+  - `Roles/`: Form nama peran dan CheckboxList seluruh izin Spatie dengan penguncian nama peran `admin`.
+- `backend/app/Filament/Pages/ManageSiteSettings.php`: Halaman pengaturan situs tunggal terikat izin `settings.manage` untuk identitas PT Indogreen, tagline, telepon, email, WhatsApp, alamat kantor, dan media sosial.
+- `backend/database/factories/`: Factory untuk `HeroSlide`, `Page`, `Office`, dan `SiteSetting`.
+- `backend/database/seeders/SiteSettingSeeder.php`: Seeder data profil perusahaan resmi dan kantor cabang, terintegrasi ke `DatabaseSeeder`.
+- `backend/tests/Feature/Filament/`: 5 berkas pengujian Pest baru (`AdminPanelAccessTest`, `ResourcePolicyTest`, `LastAdminProtectionTest`, `HtmlSanitizationTest`, `CrudSmokeTest`).
+- `.github/workflows/ci.yml`: Penambahan opsi `--memory-limit=1G` pada langkah Larastan untuk performa analisis statis optimal di lingkungan CI runner.
+- `docs/02-architecture.md`: Pembaruan justifikasi pustaka Filament CMS v5.x di seksi 7.
+- `docs/03-data-model.md`: Penambahan seksi 3.11 mendokumentasikan skema tabel ekstensi CMS dan kolom SEO.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 3.
+
+### Status Quality Gate:
+- [x] Filament CMS terpasang di `backend/` dengan panel `/admin` aktif.
+- [x] Akses panel dibatasi hanya untuk pemegang izin `access-admin` via `User::canAccessPanel()`.
+- [x] 9 resource Filament terimplementasi lengkap dengan navigasi dan translasi Bahasa Indonesia.
+- [x] Halaman pengaturan situs `ManageSiteSettings` dibatasi izin `settings.manage`.
+- [x] Policy seluruh resource menggunakan `$user->can()` sesuai matriks Spatie RBAC.
+- [x] Perlindungan admin terakhir: peran `admin` tidak bisa dihapus, admin terakhir tidak bisa dihapus atau dicabut perannya.
+- [x] Validasi form: slug unik stabil, SEO title (max 60), SEO desc (max 160), batas MIME dan ukuran upload media.
+- [x] Sanitasi HTML whitelist tag otomatis aktif pada atribut rich text model saat simpan.
+- [x] Tema default Filament dipertahankan (tanpa menerapkan design system situs publik pada panel CMS).
+- [x] Seluruh 48 tes Pest hijau (100% lulus, 177 assertion).
+- [x] Analisis statis Larastan level 5 bersih (0 error).
+- [x] Pemeriksaan gaya kode Laravel Pint bersih (0 error).
+- [x] Dokumentasi `docs/02-architecture.md`, `docs/03-data-model.md`, dan `docs/CHANGELOG-phases.md` tersinkronisasi penuh.

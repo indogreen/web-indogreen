@@ -12,8 +12,10 @@ trait HasSlug
     public static function bootHasSlug(): void
     {
         static::creating(function ($model): void {
-            if (empty($model->slug) && ! empty($model->name)) {
-                $model->slug = static::generateUniqueSlug($model->name, $model->getKey());
+            $source = ! empty($model->name) ? $model->name : (! empty($model->title) ? $model->title : null);
+
+            if (empty($model->slug) && ! empty($source)) {
+                $model->slug = static::generateUniqueSlug($source, $model->getKey());
             } elseif (! empty($model->slug)) {
                 $model->slug = Str::slug($model->slug);
             }

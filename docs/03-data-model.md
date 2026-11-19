@@ -316,6 +316,96 @@ Seluruh aset media dikaitkan ke model Eloquent via `spatie/laravel-medialibrary`
 
 ---
 
+### 3.11 Tabel Ekstensi Admin CMS (Fase 3 — Filament CMS)
+
+Ditambahkan melalui migrasi aditif `2026_11_19_230000_create_phase3_cms_tables.php` untuk mendukung pengelolaan penuh konten editorial:
+
+#### A. Tabel `hero_slides`
+Manajemen slide gambar hero banner beranda yang dapat diurutkan ulang (*reorderable*).
+
+| Kolom | Tipe Data | Keterangan / Atribut |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
+| `title` | `VARCHAR(255)` | Judul slide utama |
+| `subtitle` | `VARCHAR(255) NULL` | Subjudul / deskripsi singkat slide |
+| `button_text` | `VARCHAR(50) NULL` | Teks tombol Call-to-Action |
+| `button_url` | `VARCHAR(255) NULL` | Tautan tujuan tombol Call-to-Action |
+| `desktop_image`| `VARCHAR(255) NULL` | Berkas gambar hero untuk desktop (Maks 2MB, WebP/JPG/PNG) |
+| `mobile_image` | `VARCHAR(255) NULL` | Berkas gambar hero untuk mobile (Maks 2MB, WebP/JPG/PNG) |
+| `sort_order` | `INT DEFAULT 0` | Urutan penayangan banner, **Index** |
+| `is_active` | `BOOLEAN DEFAULT 1`| Status aktif penayangan publik, **Index** |
+| `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |
+
+#### B. Tabel `pages`
+Halaman statis CMS (Tentang Kami, Kebijakan Privasi, Syarat & Ketentuan).
+
+| Kolom | Tipe Data | Keterangan / Atribut |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
+| `title` | `VARCHAR(255)` | Judul halaman statis |
+| `slug` | `VARCHAR(255)` | Slug unik halaman, **Unique Index** |
+| `content` | `LONGTEXT NULL` | Isi konten rich text (HTML otomatis disanitasi saat simpan) |
+| `seo_title` | `VARCHAR(60) NULL` | Judul SEO / Meta Title (maks 60 karakter) |
+| `seo_description`| `VARCHAR(160) NULL`| Deskripsi SEO / Meta Description (maks 160 karakter) |
+| `is_active` | `BOOLEAN DEFAULT 1`| Status aktif halaman publik, **Index** |
+| `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |
+
+#### C. Tabel `offices`
+Informasi kantor utama dan perwakilan PT. Indogreen.
+
+| Kolom | Tipe Data | Keterangan / Atribut |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
+| `name` | `VARCHAR(255)` | Nama kantor (misal: "Kantor Utama Bogor") |
+| `office_type` | `VARCHAR(50)` | Cast ke enum `OfficeType` (`head_office`, `representative_office`) |
+| `address` | `TEXT` | Alamat fisik lengkap kantor |
+| `phone` | `VARCHAR(50) NULL` | Nomor telepon kantor |
+| `email` | `VARCHAR(255) NULL`| Alamat email kantor |
+| `map_embed_url`| `TEXT NULL` | URL embed Google Maps (atribut src iframe) |
+| `sort_order` | `INT DEFAULT 0` | Urutan tampilan kartu kantor, **Index** |
+| `is_active` | `BOOLEAN DEFAULT 1`| Status aktif, **Index** |
+| `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |
+
+#### D. Tabel `site_settings`
+Pengaturan situs global yang dikelola langsung melalui halaman pengaturan CMS (`settings.manage`).
+
+| Kolom | Tipe Data | Keterangan / Atribut |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
+| `company_name` | `VARCHAR(255)` | Nama resmi perusahaan |
+| `tagline` | `VARCHAR(255) NULL` | Tagline atau slogan perusahaan |
+| `phone` | `VARCHAR(50) NULL` | Nomor telepon resmi perusahaan |
+| `email` | `VARCHAR(255) NULL`| Alamat email resmi perusahaan |
+| `whatsapp` | `VARCHAR(50) NULL` | Nomor WhatsApp kontak cepat |
+| `head_office_address` | `TEXT NULL` | Alamat kantor pusat |
+| `representative_office_address` | `TEXT NULL` | Alamat kantor cabang perwakilan |
+| `facebook_url` | `VARCHAR(255) NULL`| Tautan profil Facebook |
+| `instagram_url`| `VARCHAR(255) NULL`| Tautan profil Instagram |
+| `youtube_url` | `VARCHAR(255) NULL`| Tautan kanal YouTube resmi |
+| `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |
+
+#### E. Tabel Pivot `product_solution`
+Relasi many-to-many antara paket solusi EBT dan produk-produk perangkat keras yang digunakan.
+
+| Kolom | Tipe Data | Keterangan / Atribut |
+|---|---|---|
+| `id` | `BIGINT UNSIGNED` | Primary Key, Auto Increment |
+| `product_id` | `BIGINT UNSIGNED` | Foreign Key ke `products.id` (`ON DELETE CASCADE`) |
+| `solution_id`| `BIGINT UNSIGNED` | Foreign Key ke `solutions.id` (`ON DELETE CASCADE`) |
+| `sort_order` | `INT DEFAULT 0` | Urutan produk dalam paket solusi |
+| `created_at` / `updated_at`| `TIMESTAMP NULL` | Timestamps Laravel |
+
+**Index Khusus:**
+- `UNIQUE INDEX product_solution_unique (product_id, solution_id)`
+
+#### F. Kolom Tambahan SEO pada `products` dan `solutions`
+- `products.seo_title`: `VARCHAR(60) NULL` (Maks 60 karakter dengan validasi hint)
+- `products.seo_description`: `VARCHAR(160) NULL` (Maks 160 karakter dengan validasi hint)
+- `solutions.seo_title`: `VARCHAR(60) NULL` (Maks 60 karakter dengan validasi hint)
+- `solutions.seo_description`: `VARCHAR(160) NULL` (Maks 160 karakter dengan validasi hint)
+
+---
+
 ## 4. Rencana Seeder Awal (Initial Seeding Strategy)
 
 1. **`RolePermissionSeeder`:**
@@ -333,3 +423,5 @@ Seluruh aset media dikaitkan ke model Eloquent via `spatie/laravel-medialibrary`
    - Menginisialisasi 5 solusi EBT: `plts-on-grid`, `plts-on-grid-hybrid`, `plts-off-grid`, `plts-off-grid-hybrid`, `backup-power-ups`.
 6. **`CompanySettingSeeder`:**
    - Memasukkan data terverifikasi (Telepon Bogor, Email `support@indogreen.id`, Alamat Bogor & Gandaria 8) serta penanda `TODO-CONTENT` untuk aset yang belum disahkan.
+7. **`SiteSettingSeeder` (Fase 3):**
+   - Menginisialisasi data `site_settings` dan lokasi `offices` (Bogor & Bandung) untuk dikelola oleh editor non-teknis melalui Filament CMS.
