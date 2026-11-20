@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		Button,
 		TextInput,
@@ -18,6 +19,12 @@
 	} from '#lib';
 
 	let isDark = $state(false);
+
+	onMount(() => {
+		if (typeof document !== 'undefined') {
+			isDark = document.documentElement.classList.contains('dark');
+		}
+	});
 
 	function toggleDarkMode() {
 		isDark = !isDark;
@@ -349,11 +356,7 @@
 	class="sticky top-0 z-50 flex items-center justify-between border-b border-hairline bg-canvas/95 px-lg py-xs backdrop-blur select-none tablet:px-xl"
 >
 	<div class="flex items-center gap-sm">
-		<div
-			class="inline-flex items-center rounded-sm border border-hairline-strong/30 bg-surface-dark px-sm py-1"
-		>
-			<img src="/indogreen.png" alt="INDOGREEN Logo" class="h-5 w-auto object-contain" />
-		</div>
+		<img src="/indogreen.png" alt="INDOGREEN Logo" class="h-6 w-auto object-contain" />
 		<span class="type-caption-md hidden font-bold tracking-wider text-ink uppercase mobile:inline">
 			Styleguide
 		</span>
@@ -392,11 +395,7 @@
 					</span>
 				</div>
 				<!-- Official Brand Logo in Hero -->
-				<div
-					class="inline-flex items-center rounded-sm border border-hairline-strong/30 bg-surface-dark/80 px-md py-xs"
-				>
-					<img src="/indogreen.png" alt="Logo Resmi INDOGREEN" class="h-8 w-auto object-contain" />
-				</div>
+				<img src="/indogreen.png" alt="Logo Resmi INDOGREEN" class="h-8 w-auto object-contain" />
 			</div>
 
 			<h1 class="type-display-xl font-bold text-on-dark">INDOGREEN Design System</h1>
@@ -504,21 +503,17 @@
 						</div>
 					</div>
 
-					<!-- Light Canvas Presentation (Protected Lockup) -->
+					<!-- Light Canvas Presentation -->
 					<div class="flex flex-col gap-sm rounded-sm border border-hairline bg-surface-soft p-xl">
 						<span class="type-caption-sm font-bold tracking-wider text-ink uppercase">
-							Tampilan Kanvas Terang (Protected Contrast Lockup)
+							Tampilan Kanvas Terang
 						</span>
 						<div class="flex items-center justify-center py-xl">
-							<div
-								class="inline-flex items-center rounded-sm border border-hairline-strong/40 bg-surface-dark px-xl py-md"
-							>
-								<img
-									src="/indogreen.png"
-									alt="INDOGREEN Logo in Lockup"
-									class="h-14 w-auto object-contain"
-								/>
-							</div>
+							<img
+								src="/indogreen.png"
+								alt="INDOGREEN Logo on Light Canvas"
+								class="h-14 w-auto object-contain"
+							/>
 						</div>
 					</div>
 				</div>
@@ -594,7 +589,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-canvas p-xl"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<Button variant="primary" size="md">Get Started</Button>
 					</div>
 					<div class="flex flex-col gap-xxs border-t border-hairline pt-md">
@@ -610,7 +605,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-canvas p-xl"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<button
 							type="button"
 							class="type-button-md min-h-touch rounded-sm bg-primary-dark px-btn-x py-btn-y font-bold text-on-primary transition-colors select-none"
@@ -633,7 +628,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-canvas p-xl"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<Button variant="outline" size="md">Read the Docs</Button>
 					</div>
 					<div class="flex flex-col gap-xxs border-t border-hairline pt-md">
@@ -649,7 +644,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-surface-dark p-xl text-on-dark"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<Button variant="outline-on-dark" size="md">Watch Video</Button>
 					</div>
 					<div class="flex flex-col gap-xxs border-t border-hairline-strong pt-md">
@@ -667,7 +662,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-canvas p-xl"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<Button variant="ghost-link" class="type-button-md font-bold uppercase">
 							<span>LEARN MORE</span>
 							<Icon name="arrow-right" size={16} class="ml-xs" />
@@ -686,7 +681,7 @@
 					class="relative flex flex-col justify-between rounded-sm border border-hairline bg-canvas p-xl"
 				>
 					<CornerSquare position="top-left" size="sm" />
-					<div class="flex min-h-[96px] items-center justify-start pt-sm">
+					<div class="flex min-h-24 items-center justify-start pt-sm">
 						<Button variant="disabled" size="md">Disabled</Button>
 					</div>
 					<div class="flex flex-col gap-xxs border-t border-hairline pt-md">
@@ -829,7 +824,7 @@
 						<textarea
 							rows={3}
 							placeholder="Describe your use case..."
-							class="type-body-md min-h-[96px] w-full rounded-sm border border-hairline bg-canvas px-input-x py-input-y text-ink transition-colors outline-none placeholder:text-stone focus:border-2 focus:border-primary"
+							class="type-body-md min-h-24 w-full rounded-sm border border-hairline bg-canvas px-input-x py-input-y text-ink transition-colors outline-none placeholder:text-stone focus:border-2 focus:border-primary"
 						></textarea>
 					</div>
 					<div class="mt-lg border-t border-hairline pt-md">

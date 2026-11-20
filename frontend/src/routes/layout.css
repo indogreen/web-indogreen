@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import '../lib/styles/tokens.css';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Default global base styles */
 html {
 	font-family: var(--font-family-primary);

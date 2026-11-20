@@ -20,12 +20,6 @@
 	}
 </script>
 
-<!-- Top Bi-Color Accent Line (Signature Engineering Separator) -->
-<div class="flex h-0.5 w-full" aria-hidden="true">
-	<div class="h-full w-1/3 bg-primary tablet:w-1/4"></div>
-	<div class="h-full w-2/3 bg-hairline-strong tablet:w-3/4"></div>
-</div>
-
 <!-- Main Dark Footer Section (Surface Dark #000000) -->
 <footer
 	class={['relative w-full bg-surface-dark pt-section pb-xl text-on-dark select-none', className]
@@ -373,13 +367,9 @@
 <div class="w-full border-t border-hairline bg-canvas py-lg text-ink select-none">
 	<Container>
 		<div class="flex flex-col gap-md">
-			<!-- Official Brand Logo in Protected Contrast Badge -->
+			<!-- Official Brand Logo -->
 			<div class="flex items-center">
-				<div
-					class="inline-flex items-center rounded-sm border border-hairline-strong/40 bg-surface-dark px-md py-xs"
-				>
-					<img src="/indogreen.png" alt="Logo Resmi INDOGREEN" class="h-6 w-auto object-contain" />
-				</div>
+				<img src="/indogreen.png" alt="Logo Resmi INDOGREEN" class="h-7 w-auto object-contain" />
 			</div>
 
 			<!-- Legal Links & Copyright Row -->

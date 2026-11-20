@@ -121,10 +121,12 @@ Berdasarkan referensi visual arsitektur enterprise dan aset logo resmi perusahaa
    - 3 kolom tautan informasi: `Company Information`, `News and Events`, `Popular Links` dengan teks tautan warna hijau brand `{colors.primary}` yang berubah menjadi hijau muda `{colors.accent-green-pale}` saat hover.
    - Baris langganan buletin EBT dengan ikon surat hijau, headline tebal, dan tombol CTA `Subscribe` hijau (`Button` primary).
    - Ikon media sosial resmi (Facebook, Instagram, LinkedIn, X, YouTube) berukuran ketuk minimal 44 × 44 px.
-3. **Sub-Footer Legal & Logo Protected Lockup:**
+3. **Sub-Footer Legal, Logo & Favicon:**
    - Bilah legal bawah menggunakan kanvas dengan batas atas hairline 1px.
-   - Mengingat logo resmi INDOGREEN (`static/indogreen.png`) memiliki tipografi tagline putih (*"SOLAR ENERGY COMPANY"*), penayangan logo di atas kanvas terang dibungkus oleh wadah kontras terlindungi (*protected lockup badge*) berlatar `{colors.surface-dark}` (`#000000`) dengan border tipis `{colors.hairline-strong}/40` untuk mempertahankan rasio kontras tinggi tanpa mendistorsi warna identitas brand.
-4. **Resolusi Kontras Mode Gelap (Dark Mode Contrast Audit):**
-   - Komponen `PillTabs` pada state aktif dikonfigurasi dengan `dark:bg-on-dark dark:text-on-primary` sehingga di atas kanvas gelap aktif dirender sebagai blok putih dengan teks hitam solid (rasio kontras 21:1), mengeliminasi diskrepansi teks putih di atas latar putih (*white-on-white*).
-   - Komponen `Badge` varian outline dan default dilengkapi token `dark:border-hairline-strong` dan `dark:bg-surface-elevated` agar tetap terbaca tegas di atas kanvas gelap.
+   - Logo resmi INDOGREEN (`static/indogreen.png`) ditampilkan langsung (*clean transparency*) tanpa pembungkus latar belakang buatan di seluruh area (Header, Hero, Showcase, dan Sub-Footer).
+   - Favicon situs secara eksklusif menggunakan aset logo resmi `static/indogreen.png` (seluruh berkas favicon SVG/PNG duplikat dihapus).
+4. **Resolusi Kontras Mode Terang vs Gelap (Class-Based Dark Mode Variant):**
+   - Mengonfigurasi `@custom-variant dark (&:where(.dark, .dark *));` di Tailwind CSS v4 untuk menjamin utilitas `dark:` hanya aktif ketika kelas `.dark` disematkan pada elemen DOM (`html`). Hal ini mencegah kebocoran preferensi mode gelap OS (`prefers-color-scheme: dark`) yang sebelumnya menyebabkan teks tab inaktif menjadi putih di atas kanvas putih saat mode terang.
+   - Komponen `PillTabs` pada state aktif dikonfigurasi dengan `dark:bg-on-dark dark:text-on-primary` sehingga di atas kanvas gelap aktif dirender sebagai blok putih dengan teks hitam solid (rasio kontras 21:1). Di atas kanvas terang, tab aktif dirender dengan isian hitam solid (`bg-ink`) dan teks putih (`text-on-dark`), sedangkan tab inaktif menggunakan teks hitam pekat (`text-ink`) dengan batas hairline (`border-hairline`).
+   - Komponen `Badge` varian default menggunakan `bg-surface-soft text-body` di mode terang (latar abu-abu muda dengan teks gelap yang kontras), dan beralih ke `dark:bg-surface-elevated dark:text-on-dark dark:border-hairline-strong` hanya saat mode gelap aktif.
    - Token `--color-stone` dan `--color-mute` pada mode gelap ditingkatkan ke `#898989` dan `#a3a3a3` untuk menjamin keterbacaan placeholder dan metadata teks melampaui standar WCAG AA (rasio kontras > 6:1).
