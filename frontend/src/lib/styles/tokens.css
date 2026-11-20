@@ -21,6 +21,7 @@
 	--color-surface-dark: #000000;
 	--color-surface-soft: #f7f7f7;
 	--color-surface-elevated: #1a1a1a;
+	--color-surface-card: #ffffff;
 	--color-hairline: #cccccc;
 	--color-hairline-strong: #5e5e5e;
 
@@ -83,6 +84,26 @@
 	--font-family-primary: 'Inter', Arial, sans-serif;
 }
 
+/* ==========================================================================
+   DARK MODE PREVIEW OVERRIDES
+   ========================================================================== */
+:root.dark,
+.dark,
+[data-theme='dark'] {
+	--color-canvas: #000000;
+	--color-surface-card: #0d0d0d;
+	--color-surface-soft: #141414;
+	--color-surface-elevated: #1a1a1a;
+	--color-hairline: #333333;
+	--color-hairline-strong: #5e5e5e;
+
+	--color-ink: #ffffff;
+	--color-body: #d1d1d1;
+	--color-mute: #898989;
+	--color-stone: #666666;
+	--color-ash: #777777;
+}
+
 @theme {
 	/* Colors */
 	--color-primary: #00b100;
@@ -93,18 +114,19 @@
 	--color-accent-yellow-pale: #ffffb3;
 	--color-accent-green-pale: #8cf03c;
 
-	--color-canvas: #ffffff;
+	--color-canvas: var(--color-canvas);
 	--color-surface-dark: #000000;
-	--color-surface-soft: #f7f7f7;
-	--color-surface-elevated: #1a1a1a;
-	--color-hairline: #cccccc;
-	--color-hairline-strong: #5e5e5e;
+	--color-surface-soft: var(--color-surface-soft);
+	--color-surface-elevated: var(--color-surface-elevated);
+	--color-surface-card: var(--color-surface-card);
+	--color-hairline: var(--color-hairline);
+	--color-hairline-strong: var(--color-hairline-strong);
 
-	--color-ink: #000000;
-	--color-body: #1a1a1a;
-	--color-mute: #757575;
-	--color-stone: #898989;
-	--color-ash: #a7a7a7;
+	--color-ink: var(--color-ink);
+	--color-body: var(--color-body);
+	--color-mute: var(--color-mute);
+	--color-stone: var(--color-stone);
+	--color-ash: var(--color-ash);
 	--color-on-dark: #ffffff;
 	--color-on-dark-mute: rgba(255, 255, 255, 0.7);
 
@@ -326,8 +348,12 @@
    GLOBAL UTILITIES & ACCESSIBILITY (WCAG 2.1 AA from docs/05-design-decisions.md)
    ========================================================================== */
 
-/* Mandatory 2px Primary Focus Ring with 2px Offset */
+/* Mandatory 2px Primary Focus Ring with 2px Offset on focus-visible only */
 .focus-ring {
+	outline: none;
+}
+
+.focus-ring:focus-visible {
 	outline: 2px solid var(--color-primary);
 	outline-offset: 2px;
 }

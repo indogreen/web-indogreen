@@ -43,14 +43,14 @@
 
 	const variantClasses: Record<ButtonVariant, string> = {
 		primary:
-			'bg-primary text-on-primary hover:opacity-95 active:bg-primary-dark focus-ring border-transparent',
+			'bg-primary text-on-primary hover:bg-primary-dark active:bg-primary-dark outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
 		outline:
-			'bg-transparent text-ink border-2 border-primary hover:bg-surface-soft active:bg-surface-soft focus-ring',
+			'bg-transparent text-ink border-2 border-primary hover:bg-surface-soft active:bg-surface-soft outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
 		'outline-on-dark':
-			'bg-transparent text-on-dark border border-on-dark hover:bg-surface-soft/10 active:bg-surface-soft/20 focus-ring',
+			'bg-transparent text-on-dark border border-on-dark hover:bg-white/10 active:bg-white/20 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
 		'ghost-link':
-			'bg-transparent text-primary hover:underline active:opacity-80 focus-ring border-transparent rounded-none',
-		disabled: 'bg-surface-soft text-ash cursor-not-allowed border-transparent pointer-events-none'
+			'bg-transparent text-primary hover:underline active:opacity-80 outline-none focus-visible:underline rounded-none',
+		disabled: 'bg-surface-soft text-ash cursor-not-allowed outline-none pointer-events-none'
 	};
 
 	const sizeClasses: Record<ButtonSize, string> = {

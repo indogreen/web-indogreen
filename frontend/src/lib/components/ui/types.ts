@@ -31,6 +31,7 @@ export type IconName =
 	| 'menu'
 	| 'x'
 	| 'sun'
+	| 'moon'
 	| 'battery'
 	| 'battery-charging'
 	| 'zap'

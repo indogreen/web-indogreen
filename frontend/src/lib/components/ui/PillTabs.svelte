@@ -48,7 +48,7 @@
 
 <div
 	role="tablist"
-	class={['inline-flex flex-wrap items-center gap-xs rounded-sm bg-surface-soft p-xxs', className]
+	class={['inline-flex flex-wrap items-center gap-xs rounded-sm', className]
 		.filter(Boolean)
 		.join(' ')}
 >
@@ -65,10 +65,10 @@
 			onclick={() => selectTab(tab.id)}
 			onkeydown={(e) => handleKeydown(e, index)}
 			class={[
-				'type-button-sm focus-ring min-h-touch rounded-sm px-pill-x py-pill-y transition-colors select-none',
+				'type-button-sm min-h-touch rounded-sm px-pill-x py-pill-y transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-primary',
 				isActive
-					? 'bg-ink font-bold text-on-dark'
-					: 'bg-transparent text-ink hover:bg-hairline/30 active:bg-hairline/50',
+					? 'border border-ink bg-ink font-bold text-on-dark'
+					: 'border border-hairline bg-transparent text-ink hover:bg-surface-soft active:bg-hairline/40',
 				tab.disabled ? 'cursor-not-allowed text-ash opacity-50' : 'cursor-pointer'
 			]
 				.filter(Boolean)

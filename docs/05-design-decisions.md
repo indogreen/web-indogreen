@@ -45,10 +45,10 @@ Dokumen `docs/DESIGN.md` adalah sumber kebenaran tunggal (*single source of trut
 - **Ketentuan `DESIGN.md` (Baris 496):**
   > "Focused: same surface, border becomes 2px solid {colors.primary} — the green border is the only focus signal in the system."
 - **Deviasi yang Diputuskan:**
-  Menambahkan `outline: 2px solid #00b100; outline-offset: 2px;` di samping border hijau untuk seluruh elemen yang dapat difokuskan (input, tombol, tautan navigasi).
+  Menerapkan cincin fokus aksesibilitas `outline: 2px solid #00b100; outline-offset: 2px;` secara ketat pada pseudoclass `:focus-visible` (keyboard focus), sementara pada keadaan diam (*resting/idle state*) seluruh tombol, kartu, dan input menggunakan `outline: none` untuk mencegah efek garis ganda (*double border*). Pada elemen formulir (`input`, `textarea`, `select`), transisi fokus diwujudkan melalui perubahan border dari 1px hairline (`#cccccc`) menjadi 2px solid primer (`#00b100`).
 - **Alasan Teknis Aksesibilitas (WCAG 2.1 AA):**
   1. Pada beberapa peramban dan perangkat layar sentuh dengan kontras dinamis tinggi, perubahan border 1px ke 2px tanpa outline offset gagal memenuhi kriteria ambang batas persepsi kontras visual WCAG SC 2.4.7 (*Focus Visible*) dan SC 1.4.11 (*Non-text Contrast*).
-  2. Menjamin pengguna keyboard navigasi tab dapat melihat cincin fokus (*focus ring*) secara jelas baik di atas kanvas hitam (`surface-dark`) maupun kanvas putih (`canvas`).
+  2. Menjamin pengguna keyboard navigasi tab dapat melihat cincin fokus (*focus ring*) secara jelas baik di atas kanvas hitam (`surface-dark`) maupun kanvas putih (`canvas`), tanpa merusak estetika visual saat elemen tidak aktif.
 
 ---
 

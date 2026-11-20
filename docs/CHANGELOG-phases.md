@@ -251,4 +251,5 @@ Menginisialisasi aplikasi SvelteKit (Svelte 5 runes, TypeScript mode strict) di 
 - [x] Pemeriksaan linter `npm run lint` (ESLint & Prettier) bersih (0 error, 0 warning).
 - [x] Build produksi SSR `npm run build` sukses tanpa galat.
 - [x] Job CI frontend di GitHub Actions diperbarui dan siap dieksekusi.
+- [x] Tombol pratinjau Mode Gelap/Terang aktif di `/styleguide`, eliminasi efek garis ganda (*zero double border*), dan penyempurnaan kartu spesimen tombol, formulir, tabs, dan badge sesuai spesifikasi CAD.
 - [x] Seluruh dokumentasi tersinkronisasi.

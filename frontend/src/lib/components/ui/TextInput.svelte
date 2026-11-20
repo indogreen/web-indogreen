@@ -32,8 +32,8 @@
 
 	const borderClass = $derived(
 		error
-			? 'border-2 border-error text-ink focus-ring'
-			: 'border border-hairline focus:border-2 focus:border-primary focus-ring'
+			? 'border border-error focus:border-2 focus:border-error focus:outline-none'
+			: 'border border-hairline focus:border-2 focus:border-primary focus:outline-none'
 	);
 </script>
 
@@ -56,8 +56,8 @@
 		aria-invalid={error ? 'true' : undefined}
 		aria-describedby={describedBy}
 		class={[
-			'type-body-md h-touch w-full rounded-sm bg-canvas px-input-x py-input-y text-ink transition-colors placeholder:text-stone',
-			disabled ? 'cursor-not-allowed bg-surface-soft text-ash' : 'bg-canvas',
+			'type-body-md h-touch w-full rounded-sm bg-canvas px-input-x py-input-y text-ink transition-colors outline-none placeholder:text-stone',
+			disabled ? 'cursor-not-allowed bg-surface-soft text-ash' : '',
 			borderClass,
 			className
 		]
