@@ -138,7 +138,50 @@ Paket-paket yang dipasang pada aplikasi backend `backend/` dibatasi hanya pada p
 
 ---
 
-## 8. Panduan Pengembangan Lokal (Local Development)
+## 8. Arsitektur Frontend SvelteKit, Komunikasi Data & SEO (Fase 6)
+
+### 8.1 Server-Only API Client & Proxy Endpoint
+Untuk menjamin keamanan arsitektur decoupled dan perlindungan integritas endpoint backend:
+1. **Server-Only API Client (`src/lib/server/api.ts`):**
+   - Beroperasi secara ketat di sisi server Node.js SvelteKit menggunakan variabel lingkungan privat `API_BASE_URL` (dari `$app/env/private`).
+   - Browser pengguna **dilarang keras** memanggil REST API Laravel secara langsung guna mencegah kebocoran endpoint internal, CORS vulnerabilities, dan ekspos data mentah yang tidak difilter.
+   - Mengimplementasikan HTTP client bertipe menggunakan native `fetch`, timeout terkonfigurasi (default 10 detik via `AbortController`), penanganan terstruktur untuk kode status HTTP (404, 422, 429, 500, 503, 504), dan kelas error kustom `ApiClientError`.
+   - Dilengkapi data fallback `DEFAULT_SITE_SETTINGS` yang komprehensif untuk menjamin bilah navigasi dan footer tetap dapat beroperasi secara anggun (*graceful degradation*) meskipun koneksi API backend sedang terganggu atau dalam masa pemeliharaan.
+2. **SvelteKit Server Inquiry Proxy (`src/routes/api/inquiries/+server.ts`):**
+   - Bertindak sebagai reverse proxy yang menerima pengiriman formulir kontak dari sisi browser klien.
+   - Melakukan validasi awal pada field wajib (`full_name`, `email`, `subject`, `message_content`, `consent`), memverifikasi field honeypot anti-spam (`website_url`), dan meneruskan payload ke endpoint REST API Laravel `/inquiries`.
+   - Mengembalikan status HTTP dan pesan kesalahan validasi terstruktur (422) secara simetris ke antarmuka klien.
+
+### 8.2 Server Hooks (`src/hooks.server.ts`)
+Setiap request yang melewati SvelteKit ditangani melalui interceptor server-side terpadu:
+1. **Security Headers Dasar:**
+   - Menambahkan header `X-Frame-Options: SAMEORIGIN` (mencegah serangan clickjacking).
+   - Menambahkan header `X-Content-Type-Options: nosniff` (mencegah MIME type sniffing).
+   - Menambahkan header `Referrer-Policy: strict-origin-when-cross-origin`.
+   - Menambahkan header `Permissions-Policy: camera=(), microphone=(), geolocation=()`.
+2. **Penanganan Error Terpusat (`handleError`):**
+   - Menangkap kesalahan rendering server yang tidak tertangani, mencatatnya ke konsol server dengan timestamp ISO, dan mengembalikan pesan kesalahan berbahasa Indonesia yang aman tanpa membocorkan rincian teknis (*stack trace*) ke klien publik.
+3. **Kerangka 301 Redirect Map:**
+   - Menyediakan kerangka pengalihan URL permanen berbasis tabel lookup untuk memigrasikan URL lama website WordPress ke rute baru monorepo (diisi secara lengkap pada Fase 9).
+4. **Header Caching Aset Statis:**
+   - Menyetel `Cache-Control: public, max-age=31536000, immutable` untuk seluruh aset yang disajikan dari path `/_app/immutable/`.
+
+### 8.3 Kerangka Layout & Hirarki Navigasi Global
+1. **`+layout.server.ts`:**
+   - Memuat data konfigurasi situs (`SiteSettings`) melalui `api.getSettings(fetch)` saat inisialisasi layout dasar sehingga informasi kontak, alamat kantor, dan media sosial selalu tersedia di seluruh halaman.
+2. **Komponen Navigasi:**
+   - **`UtilityBar` (32px):** Berlatar hitam (`surface-dark`) di puncak viewport, menampilkan telepon, email, jam operasional, dan ikon media sosial.
+   - **`PrimaryNav` (64px):** Berlatar hitam (`surface-dark`), memuat logo resmi INDOGREEN di sisi kiri, menu navigasi utama (Beranda, Produk, Solusi, Tentang Kami, Kontak) dengan indikator aktif (`aria-current="page"`), tombol pencarian modal, tombol hamburger mobile, dan satu tombol CTA hijau solid tunggal (*Single Green CTA Rule*) "Hubungi Kami". Memiliki pendeteksi scroll yang menerapkan bayangan sticky token `0 0 5px 0 rgba(0,0,0,0.3)` secara halus.
+   - **`MobileDrawer`:** Laci navigasi geser dari kanan untuk layar ponsel (< 768px), dilengkapi focus trap keyboard, pendengar tombol `Escape`, atribut aksesibilitas `aria-expanded`, serta penguncian gulir body (*scroll lock*).
+   - **`Breadcrumb` (48px):** Navigasi remah roti berlatar abu-abu muda (`surface-soft`) dengan teks uppercase `caption-md` dan pemisah chevron mute.
+   - **`SubNav` (56px):** Navigasi tingkat kedua berlatar `surface-soft`, mendukung scroll horizontal pada tablet dan dropdown select natif pada perangkat mobile.
+   - **`Footer`:** Footer enterprise berlatar hitam (`surface-dark`) dengan garis pembagi bi-color atas (hijau brand dan abu-abu kuat), 4 kolom navigasi (Produk, Solusi, Perusahaan, Kontak) yang beralih menjadi akordeon keyboard-accessible pada layar mobile, formulir buletin EBT, dan sub-footer legal dengan tahun otomatis dan nama resmi `PT. Indogreen Technology And Management`.
+3. **Komponen SEO & Metadata (`SeoHead.svelte`):**
+   - Menghasilkan template title konsisten `%s | INDOGREEN`, meta deskripsi, URL kanonikal, OpenGraph (og:title, og:description, og:image, og:url, og:type), kartu Twitter (summary_large_image), instruksi crawler robots, dan slot skrip Schema.org JSON-LD, dengan fallback otomatis ke metadata SEO yang dikembalikan oleh API Laravel.
+
+---
+
+## 9. Panduan Pengembangan Lokal (Local Development)
 
 ### 8.1 Prasyarat Perangkat Lunak
 - **Sistem Operasi:** macOS / Ubuntu 24.04 Linux
@@ -180,7 +223,7 @@ Untuk pengujian formulir kontak di lingkungan lokal tanpa koneksi SMTP publik:
 
 ---
 
-## 9. Ringkasan Deployment Server (Merujuk ke Fase 12)
+## 10. Ringkasan Deployment Server (Merujuk ke Fase 12)
 
 Pada tahap produksi di server Ubuntu 24.04:
 1. **Nginx:** Dikonfigurasi dengan file `deploy/nginx/indogreen.conf` yang mengarahkan root domain ke socket PHP-FPM dan proxy ke port Node 3000.

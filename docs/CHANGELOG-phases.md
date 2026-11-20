@@ -258,3 +258,72 @@ Menginisialisasi aplikasi SvelteKit (Svelte 5 runes, TypeScript mode strict) di 
 - [x] Job CI frontend di GitHub Actions diperbarui dan siap dieksekusi.
 - [x] Tombol pratinjau Mode Gelap/Terang aktif di `/styleguide`, eliminasi efek garis ganda (*zero double border*), dan penyempurnaan kartu spesimen tombol, formulir, tabs, dan badge sesuai spesifikasi CAD.
 - [x] Seluruh dokumentasi tersinkronisasi.
+
+---
+
+## [Fase 6] — Frontend: Layout, Navigasi, SEO, API Client (20 November 2026)
+
+### Deskripsi:
+Membangun kerangka tata letak global (*global shell*), sistem navigasi multi-tingkat responsif, fondasi SEO dan metadata, API client server-only, proxy endpoint formulir inquiry, hooks server dengan security headers terpusat, halaman penanganan error 404/500 berbasis CAD, serta seluruh placeholder rute navigasi publik. Memangkas margin kosong aset logo resmi `indogreen.png` secara lossless dengan rasio aspek terjaga, menulis pengujian unit Vitest komprehensif (16 berkas pengujian, 72 pengujian, 100% hijau), dan memverifikasi kesiapan build produksi SSR.
+
+### Berkas yang Dibuat / Diperbarui:
+- `frontend/src/lib/server/api.ts`: API client server-only yang menggunakan variabel lingkungan privat `API_BASE_URL` (dari `$app/env/private`). Mengimplementasikan fetch bertipe, timeout otomatis via `AbortController`, penanganan terstruktur untuk kode status HTTP (404, 422, 429, 500, 503, 504) melalui kelas `ApiClientError`, query string serializer, dan fallback default `DEFAULT_SITE_SETTINGS` untuk ketahanan terhadap downtime backend.
+- `frontend/src/lib/types/`: Definisi tipe data TypeScript lengkap untuk komunikasi data (`api.ts`, `settings.ts`, `product.ts`, `solution.ts`, `home.ts`, `page.ts`, `inquiry.ts`, `search.ts`, `seo.ts`, dan barrel export `index.ts`).
+- `frontend/src/routes/api/inquiries/+server.ts`: Endpoint proxy server SvelteKit untuk pengiriman formulir inquiry publik, melindungi API backend dari pemanggilan langsung browser, melakukan validasi dasar field wajib, menyaring field honeypot anti-spam (`website_url`), dan mencerminkan kode error serta error validasi ke klien.
+- `frontend/src/routes/+layout.server.ts`: Server load function yang memuat data pengaturan situs (`SiteSettings`) via `api.getSettings(fetch)` untuk dikonsumsi bilah utilitas dan footer.
+- `frontend/src/lib/components/layout/`:
+  - `Logo.svelte`: Komponen logo responsif yang menggunakan aset `static/indogreen.png` hasil pemangkasan margin, dengan alt text semantik dan pembungkus tautan beranda.
+  - `UtilityBar.svelte`: Bilah informasi atas berketinggian 32px (`bg-surface-dark`) yang menampilkan nomor telepon resmi, email, jam layanan operasional, dan tautan media sosial dari data settings.
+  - `PrimaryNav.svelte`: Bilah navigasi utama berketinggian 64px (`bg-surface-dark`) memuat logo INDOGREEN di kiri, menu navigasi utama (Beranda, Produk, Solusi, Tentang Kami, Kontak) dengan penanda aktif `aria-current="page"`, tombol pencarian modal, tombol hamburger mobile, dan satu tombol CTA hijau solid tunggal (*Single Green CTA Rule*) "Hubungi Kami". Memiliki pendeteksi scroll yang menerapkan bayangan sticky token `0 0 5px 0 rgba(0,0,0,0.3)`.
+  - `MobileDrawer.svelte`: Laci navigasi geser dari kanan untuk layar ponsel (< 768px), dilengkapi focus trap keyboard, penutup tombol `Escape`, atribut aksesibilitas `aria-expanded`, penguncian gulir body (*scroll lock*), dan target sentuh minimal 52px.
+  - `Breadcrumb.svelte`: Navigasi remah roti berketinggian 48px berlatar `surface-soft`, tipografi uppercase `caption-md`, dan pemisah chevron warna mute.
+  - `SubNav.svelte`: Navigasi tingkat kedua berketinggian 56px berlatar `surface-soft`, mendukung scroll horizontal pada tablet dan dropdown select natif pada perangkat mobile.
+  - `Footer.svelte`: Footer enterprise multi-kolom berlatar hitam (`surface-dark`) dengan garis pembagi bi-color atas, 4 kolom navigasi (Produk, Solusi, Perusahaan, Kontak) yang beralih menjadi akordeon keyboard-accessible pada layar mobile, formulir buletin EBT, dan sub-footer legal dengan penanggalan dinamis serta identitas resmi `PT. Indogreen Technology And Management`.
+  - `SeoHead.svelte`: Komponen manajemen metadata SEO dengan template title `%s | INDOGREEN`, meta deskripsi, canonical URL, OpenGraph (og:title, og:description, og:image, og:url, og:type), kartu Twitter (summary_large_image), instruksi crawler robots, dan slot skrip Schema.org JSON-LD dengan fallback otomatis ke metadata API.
+  - `index.ts`: Barrel export untuk seluruh komponen layout.
+- `frontend/src/hooks.server.ts`: Interceptor server-side terpadu dengan HTTP security headers dasar (`X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`), penanganan error terpusat (`handleError`), kerangka 301 redirect map untuk migrasi URL lama, dan header caching aset statis immutable.
+- `frontend/src/app.html`: Konfigurasi shell HTML dengan atribut `lang="id"`, meta viewport tanpa `maximum-scale` untuk aksesibilitas zoom peramban, dan favicon yang menunjuk langsung ke logo resmi `static/indogreen.png`.
+- `frontend/src/routes/+layout.svelte`: Shell tata letak global yang menggabungkan `UtilityBar`, `PrimaryNav`, slot konten, dan `Footer`.
+- `frontend/src/routes/+error.svelte`: Halaman penanganan kesalahan 404 dan 500 berbasis sistem desain CAD dengan ornamen `CornerSquare` hijau, penjelasan berbahasa Indonesia yang bersahabat, dan tombol navigasi kembali ke beranda atau katalog produk.
+- `frontend/src/routes/`: Seluruh placeholder rute publik bertanda `TODO-CONTENT`:
+  - `+page.svelte` (Beranda)
+  - `produk/+page.svelte` (Katalog Produk)
+  - `produk/[category]/+page.svelte` (Kategori Produk)
+  - `produk/[category]/[slug]/+page.svelte` (Detail Produk)
+  - `solusi/+page.svelte` (Katalog Solusi)
+  - `solusi/[slug]/+page.svelte` (Detail Solusi)
+  - `tentang-kami/+page.svelte` (Tentang Kami)
+  - `kontak/+page.svelte` (Kontak)
+  - `kebijakan-privasi/+page.svelte` (Kebijakan Privasi)
+  - `pencarian/+page.svelte` (Pencarian)
+- `frontend/static/indogreen.png`: Dipangkas secara lossless dari 861 × 371 px menjadi 809 × 233 px menggunakan utilitas biner gambar macOS `sips` (memotong 51px ruang kosong atas, 88px ruang kosong bawah, 27px ruang kosong kiri) dengan rasio aspek (~3.47:1) dan warna yang sepenuhnya dipertahankan.
+- `frontend/src/env.d.ts`: Deklarasi tipe ambient untuk `$app/env/private` dan `$env/dynamic/private`.
+- `frontend/vite.config.ts`: Konfigurasi resolve alias untuk `$lib` guna menjamin kompatibilitas modul pada runner Vitest dan SvelteKit 3.
+- `frontend/src/lib/server/api.test.ts`: 9 pengujian unit API client (GET, POST, query parameters, penanganan 404, 422, 429, 500, timeout 504, dan fallback settings default).
+- `frontend/src/lib/components/layout/Navigation.test.ts`: 7 pengujian navigasi (desktop nav, active state `aria-current="page"`, tombol search modal, single green CTA, hamburger drawer toggle, focus trap, Escape key listener, scroll lock).
+- `frontend/src/lib/components/layout/Footer.test.ts`: 6 pengujian footer (4 kolom navigasi, mobile accordion toggle via keyboard, newsletter form, settings data binding, socials, auto year).
+- `frontend/src/lib/components/layout/LayoutComponents.test.ts`: 5 pengujian komponen pendukung (Breadcrumb formatting, SubNav desktop horizontal / mobile select, SeoHead meta tags & API fallback).
+- `frontend/src/routes/api/inquiries/+server.test.ts`: 3 pengujian proxy endpoint (422 validasi input kosong, 201 sukses penerusan ke backend, 429 rate limiting backend mirroring).
+- `docs/05-design-decisions.md`: Penambahan seksi 3.6 mendokumentasikan pemangkasan margin logo PNG dan pencatatan permintaan resmi master vektor SVG ke pihak klien.
+- `docs/02-architecture.md`: Penambahan seksi 8 menjelaskan arsitektur Frontend SvelteKit SSR, server-only API client, inquiry proxy, hooks security headers, dan struktur layout navigasi global.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 6.
+
+### Status Quality Gate:
+- [x] API client server-only `src/lib/server/api.ts` aktif dengan timeout, penanganan kode 404/422/429/5xx, dan tipe data TypeScript lengkap di `src/lib/types/`.
+- [x] Browser tidak memanggil API Laravel langsung; pengiriman inquiry melewati proxy endpoint SvelteKit `/api/inquiries`.
+- [x] `+layout.server.ts` memuat data `settings` untuk UtilityBar dan Footer dengan fallback offline yang aman.
+- [x] Komponen layout lengkap: `UtilityBar`, `PrimaryNav`, `MobileDrawer`, `Breadcrumb`, `SubNav`, `Footer`.
+- [x] Navigasi desktop dan drawer mobile teruji aksesibilitas keyboard (focus trap, Esc key, aria-expanded, scroll lock).
+- [x] Komponen `Logo` menggunakan aset logo INDOGREEN yang dipangkas tanpa mengubah proporsi atau warna; permintaan SVG dicatat di `docs/05-design-decisions.md`.
+- [x] Komponen `SeoHead` menghasilkan template `%s | INDOGREEN`, canonical, og:*, twitter:*, robots, dan slot JSON-LD.
+- [x] `hooks.server.ts` menerapkan security headers, penanganan error terpusat, kerangka 301 redirect map, dan cache headers.
+- [x] `+error.svelte` merender pesan 404 dan 500 sesuai spesifikasi CAD `DESIGN.md`.
+- [x] Placeholder untuk seluruh route terbuka dan dapat dinavigasi.
+- [x] `app.html` tervalidasi: `lang="id"`, viewport tanpa `maximum-scale`, favicon logo resmi.
+- [x] Maksimal satu CTA hijau solid per viewport di seluruh halaman layout.
+- [x] Tanpa drop-shadow kecuali bayangan sticky nav saat scroll (`0 0 5px 0 rgba(0,0,0,0.3)`).
+- [x] Tanpa pustaka UI atau animasi pihak ketiga tambahan.
+- [x] `npm run check` (svelte-check) bersih: 0 error, 0 warning.
+- [x] `npm run lint` (Prettier & ESLint) bersih: 0 error, 0 warning.
+- [x] `npm test` (Vitest) 100% hijau: 16 test files passed, 72 tests passed.
+- [x] `npm run build` sukses membuat bundle SSR Node tanpa error.

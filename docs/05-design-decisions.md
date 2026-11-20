@@ -130,3 +130,13 @@ Berdasarkan referensi visual arsitektur enterprise dan aset logo resmi perusahaa
    - Komponen `PillTabs` pada state aktif dikonfigurasi dengan `dark:bg-on-dark dark:text-on-primary` sehingga di atas kanvas gelap aktif dirender sebagai blok putih dengan teks hitam solid (rasio kontras 21:1). Di atas kanvas terang, tab aktif dirender dengan isian hitam solid (`bg-ink`) dan teks putih (`text-on-dark`), sedangkan tab inaktif menggunakan teks hitam pekat (`text-ink`) dengan batas hairline (`border-hairline`).
    - Komponen `Badge` varian default menggunakan `bg-surface-soft text-body` di mode terang (latar abu-abu muda dengan teks gelap yang kontras), dan beralih ke `dark:bg-surface-elevated dark:text-on-dark dark:border-hairline-strong` hanya saat mode gelap aktif.
    - Token `--color-stone` dan `--color-mute` pada mode gelap ditingkatkan ke `#898989` dan `#a3a3a3` untuk menjamin keterbacaan placeholder dan metadata teks melampaui standar WCAG AA (rasio kontras > 6:1).
+
+---
+
+### 3.6 Pangkas Margin Aset Logo PNG & Permintaan Berkas Resmi SVG (Fase 6)
+- **Kondisi Aset Awal:**
+  Aset logo resmi yang tersedia di repositori adalah berkas raster `static/indogreen.png` dengan resolusi 861 × 371 px. Pemeriksaan visual dan analisis batas piksel menunjukkan adanya ruang kosong (*transparent padding*) yang signifikan di sekeliling glif logo (padding atas 51px, bawah 88px, kiri 27px, kanan 25px). Ruang kosong ini menyebabkan komponen navigasi (PrimaryNav 64px) dan UtilityBar terdorong melebihi batasan CAD design system ketika logo ditampilkan secara proporsional.
+- **Tindakan Pemangkasan (Cropping):**
+  Aset dipangkas (*lossless trim*) menjadi 809 × 233 px menggunakan utilitas biner gambar macOS `sips`. Pemangkasan mempertahankan 100% rasio aspek asli (~3.47:1) serta integritas warna tanpa alterasi apa pun.
+- **Permintaan Aset Resmi Vektor SVG Klien (Action Item):**
+  Untuk menjamin ketajaman visual absolut pada layar resolusi tinggi (Retina/HiDPI), website membutuhkan berkas master vektor SVG resmi (`logo-indogreen.svg`). Hal ini dicatat sebagai *Action Item* untuk tim perwakilan klien PT. Indogreen Technology And Management.

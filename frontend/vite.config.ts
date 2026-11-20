@@ -1,3 +1,4 @@
+import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitest/config';
 import adapter from '@sveltejs/adapter-node';
@@ -15,13 +16,16 @@ export default defineConfig(({ mode }) => ({
       adapter: adapter()
     })
   ],
-  ...(mode === 'test'
-    ? {
-        resolve: {
+  resolve: {
+    alias: {
+      $lib: path.resolve(import.meta.dirname, './src/lib')
+    },
+    ...(mode === 'test'
+      ? {
           conditions: ['browser']
         }
-      }
-    : {}),
+      : {})
+  },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts}'],

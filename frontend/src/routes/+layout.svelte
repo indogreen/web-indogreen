@@ -1,13 +1,28 @@
 <script lang="ts">
   import './layout.css';
+  import { page } from '$app/state';
   import type { LayoutProps } from './$types';
+  import UtilityBar from '$lib/components/layout/UtilityBar.svelte';
+  import PrimaryNav from '$lib/components/layout/PrimaryNav.svelte';
+  import Footer from '$lib/components/layout/Footer.svelte';
 
-  let { children }: LayoutProps = $props();
+  let { data, children }: LayoutProps = $props();
+
+  const currentPath = $derived(page.url.pathname);
 </script>
 
-<svelte:head>
-  <link rel="icon" type="image/png" href="/indogreen.png" />
-  <link rel="apple-touch-icon" href="/indogreen.png" />
-</svelte:head>
+<div class="flex min-h-screen flex-col bg-canvas text-body">
+  <!-- Utility Bar (32px, Surface Dark) -->
+  <UtilityBar settings={data.settings} />
 
-{@render children()}
+  <!-- Primary Nav (64px, Sticky, Surface Dark) -->
+  <PrimaryNav {currentPath} />
+
+  <!-- Main Content Area -->
+  <main class="flex-1">
+    {@render children()}
+  </main>
+
+  <!-- Footer (Surface Dark & Sub-Footer) -->
+  <Footer settings={data.settings} />
+</div>
