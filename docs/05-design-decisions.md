@@ -115,8 +115,8 @@ Untuk layar di bawah breakpoint tablet (lebar < 768px):
 
 ### 3.5 Arsitektur Footer Komprehensif, Logo Lockup & Resolusi Kontras Mode Gelap
 Berdasarkan referensi visual arsitektur enterprise dan aset logo resmi perusahaan:
-1. **Garis Aksen Bi-Color Atas:**
-   - Garis pemisah 2px di atas footer: sepertiga kiri berwarna hijau brand `{colors.primary}` (`#00b100`), dua pertiga kanan berwarna abu-abu kuat `{colors.hairline-strong}` (`#5e5e5e`).
+1. **Garis Aksen Bi-Color Atas (Dieliminasi):**
+   - Eksperimen garis pemisah 2px di atas footer (sepertiga hijau brand dan dua pertiga abu-abu) dihapus secara permanen sesuai arahan desain untuk menjaga kanvas footer gelap (`bg-surface-dark` #000000) menyatu secara seamless dan solid tanpa distraksi visual sekunder.
 2. **Bab Utama Footer (`bg-surface-dark` #000000):**
    - 3 kolom tautan informasi: `Company Information`, `News and Events`, `Popular Links` dengan teks tautan warna hijau brand `{colors.primary}` yang berubah menjadi hijau muda `{colors.accent-green-pale}` saat hover.
    - Baris langganan buletin EBT dengan ikon surat hijau, headline tebal, dan tombol CTA `Subscribe` hijau (`Button` primary).

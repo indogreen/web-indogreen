@@ -122,6 +122,14 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
+      - name: Prepare Environment File
+        if: steps.check_frontend.outputs.installed == 'true'
+        working-directory: ./frontend
+        run: |
+          if [ -f ".env.example" ] && [ ! -f ".env" ]; then
+            cp .env.example .env
+          fi
+
       - name: Typecheck & Svelte Check
         if: steps.check_frontend.outputs.installed == 'true'
         working-directory: ./frontend

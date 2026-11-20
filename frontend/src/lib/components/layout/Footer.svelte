@@ -46,12 +46,6 @@
   const social = $derived(settings?.social_links);
 </script>
 
-<!-- Top Bi-Color Accent Line (1/3 Green, 2/3 Hairline-Strong per docs/05-design-decisions.md) -->
-<div class="flex h-[2px] w-full" aria-hidden="true">
-  <div class="w-1/3 bg-primary"></div>
-  <div class="w-2/3 bg-hairline-strong"></div>
-</div>
-
 <!-- Main Dark Footer Chapter (Surface Dark #000000) -->
 <footer
   class={['relative w-full bg-surface-dark pt-section pb-xl text-on-dark select-none', className]
