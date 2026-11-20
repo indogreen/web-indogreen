@@ -13,7 +13,8 @@
 		CalloutStat,
 		Container,
 		Section,
-		Icon
+		Icon,
+		Footer
 	} from '#lib';
 
 	let isDark = $state(false);
@@ -348,11 +349,15 @@
 	class="sticky top-0 z-50 flex items-center justify-between border-b border-hairline bg-canvas/95 px-lg py-xs backdrop-blur select-none tablet:px-xl"
 >
 	<div class="flex items-center gap-sm">
-		<div class="h-3 w-3 bg-primary"></div>
-		<span class="type-caption-md font-bold tracking-wider text-ink uppercase">
-			INDOGREEN Styleguide
+		<div
+			class="inline-flex items-center rounded-sm border border-hairline-strong/30 bg-surface-dark px-sm py-1"
+		>
+			<img src="/indogreen.png" alt="INDOGREEN Logo" class="h-5 w-auto object-contain" />
+		</div>
+		<span class="type-caption-md hidden font-bold tracking-wider text-ink uppercase mobile:inline">
+			Styleguide
 		</span>
-		<Badge variant="primary" class="hidden mobile:inline-flex">DEV ONLY</Badge>
+		<Badge variant="primary" class="hidden tablet:inline-flex">DEV ONLY</Badge>
 	</div>
 
 	<div class="flex items-center gap-sm">
@@ -379,11 +384,19 @@
 	<Container>
 		<div class="relative flex flex-col gap-lg py-xl">
 			<CornerSquare position="top-left" size="lg" />
-			<div class="flex items-center gap-sm">
-				<Badge variant="primary">DEV ONLY</Badge>
-				<span class="type-caption-md font-bold tracking-normal text-accent-yellow uppercase">
-					DESIGN SYSTEM V1.0 (FROZEN SPECIFICATION)
-				</span>
+			<div class="flex flex-wrap items-center justify-between gap-md">
+				<div class="flex items-center gap-sm">
+					<Badge variant="primary">DEV ONLY</Badge>
+					<span class="type-caption-md font-bold tracking-normal text-accent-yellow uppercase">
+						DESIGN SYSTEM V1.0 (FROZEN SPECIFICATION)
+					</span>
+				</div>
+				<!-- Official Brand Logo in Hero -->
+				<div
+					class="inline-flex items-center rounded-sm border border-hairline-strong/30 bg-surface-dark/80 px-md py-xs"
+				>
+					<img src="/indogreen.png" alt="Logo Resmi INDOGREEN" class="h-8 w-auto object-contain" />
+				</div>
 			</div>
 
 			<h1 class="type-display-xl font-bold text-on-dark">INDOGREEN Design System</h1>
@@ -430,9 +443,21 @@
 				{#each colorTokens as col (col.name)}
 					<div class="flex flex-col overflow-hidden rounded-sm border border-hairline bg-canvas">
 						<div
-							class={`flex h-touch w-full items-center justify-between px-md ${col.bg} ${col.border ? 'border-b border-hairline' : ''}`}
+							class={`flex h-touch w-full items-center justify-between px-md ${col.border ? 'border-b border-hairline' : ''}`}
+							style="background-color: {col.hex}; color: {col.hex === '#000000' ||
+							col.hex === '#1a1a1a' ||
+							col.hex === '#5e5e5e' ||
+							col.hex === '#0046a4' ||
+							col.hex === '#e52020' ||
+							col.hex === '#df6500' ||
+							col.hex === '#007a00' ||
+							col.hex === '#008a00' ||
+							col.hex === '#757575' ||
+							col.hex === '#898989'
+								? '#ffffff'
+								: '#000000'};"
 						>
-							<span class={`type-caption-xs font-bold uppercase ${col.text}`}>
+							<span class="type-caption-xs font-bold uppercase">
 								{col.hex}
 							</span>
 						</div>
@@ -446,6 +471,57 @@
 						</div>
 					</div>
 				{/each}
+			</div>
+
+			<!-- Official Brand Logo Showcase -->
+			<div class="relative flex flex-col gap-md rounded-sm border border-hairline bg-canvas p-xl">
+				<CornerSquare position="top-left" size="sm" />
+				<div class="flex flex-wrap items-center justify-between gap-sm pt-xs">
+					<div>
+						<h3 class="type-heading-md font-bold text-ink">Logo Resmi Perusahaan (Brand Asset)</h3>
+						<p class="type-body-md mt-xxs text-mute">
+							Komponen identitas visual resmi PT. Indogreen Technology And Management. Warna
+							disampel langsung untuk CTA (#00b100) dan aksen (#ffff00).
+						</p>
+					</div>
+					<span class="type-caption-sm font-mono text-mute">static/indogreen.png · 861×371 px</span>
+				</div>
+
+				<div class="grid grid-cols-1 gap-lg pt-sm tablet:grid-cols-2">
+					<!-- Dark Canvas Presentation (Native Surface) -->
+					<div
+						class="flex flex-col gap-sm rounded-sm border border-hairline-strong bg-surface-dark p-xl"
+					>
+						<span class="type-caption-sm font-bold tracking-wider text-accent-yellow uppercase">
+							Tampilan Kanvas Gelap (Hero / Nav / Footer)
+						</span>
+						<div class="flex items-center justify-center py-xl">
+							<img
+								src="/indogreen.png"
+								alt="INDOGREEN Logo on Dark"
+								class="h-14 w-auto object-contain"
+							/>
+						</div>
+					</div>
+
+					<!-- Light Canvas Presentation (Protected Lockup) -->
+					<div class="flex flex-col gap-sm rounded-sm border border-hairline bg-surface-soft p-xl">
+						<span class="type-caption-sm font-bold tracking-wider text-ink uppercase">
+							Tampilan Kanvas Terang (Protected Contrast Lockup)
+						</span>
+						<div class="flex items-center justify-center py-xl">
+							<div
+								class="inline-flex items-center rounded-sm border border-hairline-strong/40 bg-surface-dark px-xl py-md"
+							>
+								<img
+									src="/indogreen.png"
+									alt="INDOGREEN Logo in Lockup"
+									class="h-14 w-auto object-contain"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</Container>
@@ -1056,4 +1132,27 @@
 			</div>
 		</div>
 	</Container>
+</Section>
+
+<!-- Footer Section Showcase (per reference architecture) -->
+<Section tone="light" id="footer-preview" class="border-b-0 pb-0">
+	<Container>
+		<div class="flex flex-col gap-sm pb-xl">
+			<div class="flex items-center gap-xs">
+				<CornerSquare position="inline" size="sm" class="mr-xs" />
+				<span class="type-caption-md font-bold text-primary uppercase">
+					07 — STRUKTUR FOOTER & NAVIGASI BAWAH
+				</span>
+			</div>
+			<h2 class="type-display-lg mt-xs font-bold text-ink">Footer Chapter & Legal Sub-Footer</h2>
+			<p class="type-body-md mt-xs text-mute">
+				Bab penutup halaman dengan kanvas gelap (#000000), 3 kolom tautan teknis, baris langganan
+				buletin EBT, ikon sosial media resmi, serta bilah legal sub-footer dengan logo resmi
+				INDOGREEN.
+			</p>
+		</div>
+	</Container>
+
+	<!-- Live Footer Component -->
+	<Footer />
 </Section>

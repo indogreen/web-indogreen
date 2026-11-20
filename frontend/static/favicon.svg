@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="INDOGREEN Favicon">
+  <!-- Brand Black Canvas Base with 2px CAD corner radius -->
+  <rect width="64" height="64" rx="4" fill="#000000"/>
+  <!-- Solar Radiance Circle in Accent Yellow -->
+  <circle cx="32" cy="32" r="16" fill="#ffff00"/>
+  <!-- Solar Rays in INDOGREEN Green -->
+  <path d="M32 6 L32 12 M32 52 L32 58 M6 32 L12 32 M52 32 L58 32 M13.6 13.6 L17.8 17.8 M46.2 46.2 L50.4 50.4 M13.6 50.4 L17.8 46.2 M46.2 17.8 L50.4 13.6" stroke="#00b100" stroke-width="4" stroke-linecap="round"/>
+  <!-- Central Leaf Renewable Symbol in INDOGREEN Green -->
+  <path d="M32 20 C41 26 41 38 32 44 C23 38 23 26 32 20 Z" fill="#00b100"/>
+  <!-- Signature 6x6 Green Corner Accent -->
+  <rect x="0" y="0" width="8" height="8" fill="#00b100"/>
+</svg>

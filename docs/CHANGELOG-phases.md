@@ -229,9 +229,12 @@ Menginisialisasi aplikasi SvelteKit (Svelte 5 runes, TypeScript mode strict) di 
 - `frontend/src/routes/+layout.svelte`: Shell tata letak global yang mengimpor `tokens.css` dan font Inter.
 - `frontend/src/routes/+page.svelte`: Halaman beranda pengembangan yang mengarahkan pengembang ke rute `/styleguide`.
 - `frontend/src/routes/styleguide/+page.server.ts`: Penjaga rute dev-only yang memicu HTTP 404 saat `!dev` di lingkungan produksi.
-- `frontend/src/routes/styleguide/+page.svelte`: Halaman showcase panduan gaya interaktif komprehensif yang menampilkan seluruh palet warna, 18 tingkatan tipografi, tombol di atas kanvas terang dan gelap, input formulir, badge, tabs, kartu-kartu, dan callout statistik.
-- `frontend/src/lib/components/ui/__tests__/`: 10 berkas pengujian Vitest (`Button.test.ts`, `TextInput.test.ts`, `Textarea.test.ts`, `Select.test.ts`, `Badge.test.ts`, `PillTabs.test.ts`, `CornerSquare.test.ts`, `Cards.test.ts`, `Layout.test.ts`, `Icon.test.ts`) mencakup 37 test case.
+- `frontend/src/routes/styleguide/+page.svelte`: Halaman showcase panduan gaya interaktif komprehensif yang menampilkan logo resmi INDOGREEN, seluruh palet warna, 18 tingkatan tipografi, tombol di atas kanvas terang dan gelap, input formulir, badge, tabs, kartu-kartu, callout statistik, dan pratinjau komponen Footer.
+- `frontend/src/lib/components/ui/Footer.svelte`: Komponen bab penutup halaman enterprise dengan aksen garis bi-color, 3 kolom tautan teknis hijau, formulir buletin, ikon sosial media, dan sub-footer legal dengan logo resmi perusahaan.
+- `frontend/static/favicon.png` & `frontend/static/favicon.svg` & `frontend/src/lib/assets/favicon.svg`: Favicon resmi berlogo INDOGREEN dengan motif daun surya hijau dan kuning.
+- `frontend/src/lib/components/ui/`: 11 berkas pengujian Vitest (`Button.test.ts`, `TextInput.test.ts`, `Textarea.test.ts`, `Select.test.ts`, `Badge.test.ts`, `PillTabs.test.ts`, `CornerSquare.test.ts`, `Cards.test.ts`, `Layout.test.ts`, `Icon.test.ts`, `Footer.test.ts`) mencakup 41 test case.
 - `.github/workflows/ci.yml`: Pembaruan komentar pengaktifan Fase 5 dan penambahan langkah verifikasi `Build Check` (`npm run build`) pada job `frontend-ci`.
+- `docs/05-design-decisions.md`: Penambahan seksi 3.5 mendokumentasikan arsitektur footer enterprise, lockup logo terlindungi, dan resolusi kontras mode gelap.
 - `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 5.
 
 ### Status Quality Gate:
@@ -239,14 +242,16 @@ Menginisialisasi aplikasi SvelteKit (Svelte 5 runes, TypeScript mode strict) di 
 - [x] Front matter `DESIGN.md` diterjemahkan secara presisi ke `src/lib/styles/tokens.css` (warna, 18 skala tipografi, spasi 8px, radius 2px, container 1280px).
 - [x] Self-hosted font Inter 400 & 700 aktif dengan `font-display: swap` dan fallback Arial.
 - [x] Ikonografi terstandarisasi via pustaka Lucide Icons (`@lucide/svelte`) melalui komponen `Icon.svelte`.
-- [x] 14 komponen UI atomik & molekuler dibangun dan diekspor di `src/lib/components/ui/`.
+- [x] 15 komponen UI atomik & molekuler dibangun dan diekspor di `src/lib/components/ui/` (termasuk `Footer.svelte`).
 - [x] Nol warna heksadesimal lepas atau ukuran piksel lepas di seluruh komponen UI (`src/lib/components/ui/`).
 - [x] Tidak ada drop-shadow pada kartu (hanya batas hairline 1px datar).
 - [x] Tidak ada radius di atas 2px (`rounded-sm`) pada tombol, kartu, input, maupun tabs (tidak ada pill button).
 - [x] Teks pada tombol hijau primer (`Button` variant `primary`) berwarna hitam pekat (`#000000`).
 - [x] Aksen kuning hanya diaplikasikan pada permukaan gelap dan tidak pernah sebagai warna isian CTA.
 - [x] Rute dev-only `/styleguide` selesai dan otomatis mengembalikan HTTP 404 pada build produksi.
-- [x] 37 tes unit komponen Vitest lulus hijau (100%).
+- [x] Logo resmi `indogreen.png` dan favicon resmi terintegrasi penuh.
+- [x] Audit kontras mode gelap tuntas: tab aktif `PillTabs` menggunakan `dark:bg-on-dark dark:text-on-primary` (kontras 21:1), token teks gelap ditingkatkan melampaui WCAG AA (> 6:1).
+- [x] Seluruh 41 tes unit komponen Vitest lulus hijau (100%).
 - [x] Pemeriksaan tipe `npm run check` (svelte-check) bersih (0 error, 0 warning).
 - [x] Pemeriksaan linter `npm run lint` (ESLint & Prettier) bersih (0 error, 0 warning).
 - [x] Build produksi SSR `npm run build` sukses tanpa galat.

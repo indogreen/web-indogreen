@@ -13,10 +13,12 @@
 	let { variant = 'default', text, class: className = '', children }: Props = $props();
 
 	const variantClasses: Record<BadgeVariant, string> = {
-		default: 'bg-surface-soft text-body border-transparent',
-		primary: 'bg-primary text-on-primary border-transparent',
-		dark: 'bg-surface-elevated text-on-dark border-transparent',
-		outline: 'bg-transparent text-body border border-hairline'
+		default:
+			'bg-surface-soft text-body border-transparent dark:bg-surface-elevated dark:text-on-dark dark:border-hairline-strong border',
+		primary: 'bg-primary text-on-primary border-transparent border',
+		dark: 'bg-surface-elevated text-on-dark border-transparent dark:border-hairline-strong border',
+		outline:
+			'bg-transparent text-body border border-hairline dark:border-hairline-strong dark:text-on-dark'
 	};
 </script>
 

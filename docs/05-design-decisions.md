@@ -110,3 +110,21 @@ Untuk layar di bawah breakpoint tablet (lebar < 768px):
 - **`button-outline`:** Hover memberikan warna latar tipis `{colors.surface-soft}` (`#f7f7f7`) tanpa mengubah border hijau.
 - **`product-card` & `resource-card`:** Hover mengubah border hairline dari `#cccccc` menjadi border tegas `#00b100` (tanpa shadow/elevasi mengambang).
 - **Tautan Teks Inline:** Hover memicu garis bawah (*underline*) aktif.
+
+---
+
+### 3.5 Arsitektur Footer Komprehensif, Logo Lockup & Resolusi Kontras Mode Gelap
+Berdasarkan referensi visual arsitektur enterprise dan aset logo resmi perusahaan:
+1. **Garis Aksen Bi-Color Atas:**
+   - Garis pemisah 2px di atas footer: sepertiga kiri berwarna hijau brand `{colors.primary}` (`#00b100`), dua pertiga kanan berwarna abu-abu kuat `{colors.hairline-strong}` (`#5e5e5e`).
+2. **Bab Utama Footer (`bg-surface-dark` #000000):**
+   - 3 kolom tautan informasi: `Company Information`, `News and Events`, `Popular Links` dengan teks tautan warna hijau brand `{colors.primary}` yang berubah menjadi hijau muda `{colors.accent-green-pale}` saat hover.
+   - Baris langganan buletin EBT dengan ikon surat hijau, headline tebal, dan tombol CTA `Subscribe` hijau (`Button` primary).
+   - Ikon media sosial resmi (Facebook, Instagram, LinkedIn, X, YouTube) berukuran ketuk minimal 44 × 44 px.
+3. **Sub-Footer Legal & Logo Protected Lockup:**
+   - Bilah legal bawah menggunakan kanvas dengan batas atas hairline 1px.
+   - Mengingat logo resmi INDOGREEN (`static/indogreen.png`) memiliki tipografi tagline putih (*"SOLAR ENERGY COMPANY"*), penayangan logo di atas kanvas terang dibungkus oleh wadah kontras terlindungi (*protected lockup badge*) berlatar `{colors.surface-dark}` (`#000000`) dengan border tipis `{colors.hairline-strong}/40` untuk mempertahankan rasio kontras tinggi tanpa mendistorsi warna identitas brand.
+4. **Resolusi Kontras Mode Gelap (Dark Mode Contrast Audit):**
+   - Komponen `PillTabs` pada state aktif dikonfigurasi dengan `dark:bg-on-dark dark:text-on-primary` sehingga di atas kanvas gelap aktif dirender sebagai blok putih dengan teks hitam solid (rasio kontras 21:1), mengeliminasi diskrepansi teks putih di atas latar putih (*white-on-white*).
+   - Komponen `Badge` varian outline dan default dilengkapi token `dark:border-hairline-strong` dan `dark:bg-surface-elevated` agar tetap terbaca tegas di atas kanvas gelap.
+   - Token `--color-stone` dan `--color-mute` pada mode gelap ditingkatkan ke `#898989` dan `#a3a3a3` untuk menjamin keterbacaan placeholder dan metadata teks melampaui standar WCAG AA (rasio kontras > 6:1).

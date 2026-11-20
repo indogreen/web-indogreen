@@ -67,8 +67,8 @@
 			class={[
 				'type-button-sm min-h-touch rounded-sm px-pill-x py-pill-y transition-colors outline-none select-none focus-visible:outline-2 focus-visible:outline-primary',
 				isActive
-					? 'border border-ink bg-ink font-bold text-on-dark'
-					: 'border border-hairline bg-transparent text-ink hover:bg-surface-soft active:bg-hairline/40',
+					? 'border border-ink bg-ink font-bold text-on-dark dark:border-on-dark dark:bg-on-dark dark:text-on-primary'
+					: 'border border-hairline bg-transparent text-ink hover:bg-surface-soft active:bg-hairline/40 dark:border-hairline-strong dark:text-on-dark dark:hover:bg-surface-elevated',
 				tab.disabled ? 'cursor-not-allowed text-ash opacity-50' : 'cursor-pointer'
 			]
 				.filter(Boolean)

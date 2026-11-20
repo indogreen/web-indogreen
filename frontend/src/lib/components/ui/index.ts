@@ -12,5 +12,6 @@ export { default as CalloutStat } from './CalloutStat.svelte';
 export { default as Container } from './Container.svelte';
 export { default as Section } from './Section.svelte';
 export { default as Icon } from './Icon.svelte';
+export { default as Footer } from './Footer.svelte';
 
 export * from './types.js';
