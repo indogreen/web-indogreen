@@ -36,7 +36,13 @@
     Calendar,
     Building,
     Building2,
-    HelpCircle
+    HelpCircle,
+    Play,
+    Pause,
+    Home,
+    Cpu,
+    Truck,
+    PackageOpen
   } from '@lucide/svelte';
 
   interface Props {
@@ -94,7 +100,13 @@
     calendar: Calendar,
     building: Building,
     'building-2': Building2,
-    'help-circle': HelpCircle
+    'help-circle': HelpCircle,
+    play: Play,
+    pause: Pause,
+    home: Home,
+    cpu: Cpu,
+    truck: Truck,
+    'package-open': PackageOpen
   } as const;
 
   const SelectedIcon = $derived(iconMap[name] ?? HelpCircle);

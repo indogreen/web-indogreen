@@ -1,99 +1,211 @@
 <script lang="ts">
+  import { goto } from '$app/navigation';
+  import type { PageData } from './$types.js';
   import Container from '$lib/components/ui/Container.svelte';
   import Section from '$lib/components/ui/Section.svelte';
   import Button from '$lib/components/ui/Button.svelte';
-  import CornerSquare from '$lib/components/ui/CornerSquare.svelte';
+  import ProductCard from '$lib/components/ui/ProductCard.svelte';
+  import PillTabs from '$lib/components/ui/PillTabs.svelte';
+  import Badge from '$lib/components/ui/Badge.svelte';
+  import Icon from '$lib/components/ui/Icon.svelte';
   import SeoHead from '$lib/components/layout/SeoHead.svelte';
   import Breadcrumb from '$lib/components/layout/Breadcrumb.svelte';
-  import SubNav from '$lib/components/layout/SubNav.svelte';
 
-  const subNavItems = [
-    { label: 'Semua Produk', href: '/produk' },
-    { label: 'PJU Tenaga Surya', href: '/produk/pju-tenaga-surya' },
-    { label: 'PLTS Residensial', href: '/produk/plts-residential' },
-    { label: 'Solar Home System', href: '/produk/solar-home-system' },
-    { label: 'Aksesoris Kelistrikan', href: '/produk/aksesoris-kelistrikan' }
-  ];
+  interface Props {
+    data: PageData;
+  }
+
+  let { data }: Props = $props();
+
+  const selectedCategoryObj = $derived(
+    data.categories.find((c) => c.slug === data.selectedCategory)
+  );
+
+  const activeCategoryTitle = $derived(
+    selectedCategoryObj ? selectedCategoryObj.name : 'Semua Produk'
+  );
+
+  const categoryTabs = $derived([
+    { id: '', label: 'Semua Produk' },
+    ...data.categories.map((c) => ({
+      id: c.slug,
+      label: c.name
+    }))
+  ]);
+
+  function handleCategoryChange(tabId: string) {
+    const targetUrl = tabId ? `/produk?kategori=${encodeURIComponent(tabId)}` : '/produk';
+    void goto(targetUrl);
+  }
+
+  function getPaginationUrl(page: number): string {
+    const parts: string[] = [];
+    if (data.selectedCategory) {
+      parts.push(`kategori=${encodeURIComponent(data.selectedCategory)}`);
+    }
+    if (page > 1) {
+      parts.push(`page=${page}`);
+    }
+    return parts.length > 0 ? `/produk?${parts.join('&')}` : '/produk';
+  }
 </script>
 
 <SeoHead
-  title="Katalog Produk EBT & PJU Surya"
-  description="Katalog resmi perangkat keras dan sistem tenaga surya PT. Indogreen Technology And Management: Lampu PJU Two-In-One, All-In-One, baterai LiFePO4, dan inverter."
+  title={data.selectedCategory
+    ? `Produk ${activeCategoryTitle}`
+    : 'Katalog Produk Tenaga Surya & EBT'}
+  description={selectedCategoryObj?.description ||
+    'Katalog resmi perangkat keras dan sistem tenaga surya PT. Indogreen Technology And Management: Lampu PJU Two-In-One, All-In-One, baterai LiFePO4, dan modul fotovoltaik.'}
 />
 
-<Breadcrumb items={[{ label: 'Produk' }]} />
-<SubNav items={subNavItems} activeHref="/produk" ariaLabel="Kategori Produk" />
+<Breadcrumb
+  items={data.selectedCategory
+    ? [{ label: 'Produk', href: '/produk' }, { label: activeCategoryTitle }]
+    : [{ label: 'Produk' }]}
+/>
 
-<Section tone="light">
+<Section tone="light" class="border-none">
   <Container>
-    <div class="mb-xl flex flex-col gap-xs">
-      <h1 class="type-display-lg font-bold text-ink">Katalog Produk Tenaga Surya</h1>
-      <p class="type-body-md max-w-3xl text-body">
-        Perangkat keras berkualitas tinggi yang dirancang untuk keandalan maksimal di iklim tropis
-        Indonesia, didukung garansi resmi dan ketersediaan suku cadang purna jual.
+    <!-- Header -->
+    <div class="mb-xl flex flex-col items-start gap-xs">
+      <span class="type-caption-md font-bold tracking-wider text-mute uppercase">
+        KATALOG PERANGKAT KERAS
+      </span>
+      <h1 class="type-display-lg font-bold text-ink">
+        {data.selectedCategory ? `Produk: ${activeCategoryTitle}` : 'Katalog Produk Tenaga Surya'}
+      </h1>
+      <p class="type-body-md max-w-3xl leading-relaxed text-body">
+        {selectedCategoryObj?.description ||
+          'Perangkat sistem energi baru dan terbarukan berkualitas tinggi yang dirancang untuk efisiensi maksimal, didukung garansi resmi dan ketersediaan suku cadang purna jual.'}
       </p>
+    </div>
 
+    <!-- Category PillTabs (Filter state mirrored in URL ?kategori=) -->
+    <div class="mb-xl flex flex-col gap-sm">
+      <span class="type-caption-sm font-bold text-mute uppercase"> Pilih Kategori: </span>
+      <div class="flex flex-wrap items-center gap-xs">
+        <PillTabs
+          tabs={categoryTabs}
+          activeTab={data.selectedCategory}
+          onchange={handleCategoryChange}
+        />
+      </div>
+    </div>
+
+    <!-- Product Grid or Empty State -->
+    {#if data.products.length > 0}
       <div
-        class="type-caption-sm mt-sm inline-flex items-center gap-xs rounded-sm border border-hairline bg-surface-soft px-md py-xs text-stone"
+        class="grid grid-cols-1 gap-xl tablet:grid-cols-2 desktop-small:grid-cols-3 desktop:grid-cols-4"
+        data-testid="product-grid"
       >
-        <span>
-          TODO-CONTENT: Grid katalog produk interaktif dengan paginasi dan filter diimplementasikan
-          pada Fase 8.
-        </span>
-      </div>
-    </div>
-
-    <!-- Category Placeholder Cards -->
-    <div class="grid grid-cols-1 gap-lg tablet:grid-cols-2 desktop:grid-cols-4">
-      <div class="relative border border-hairline bg-canvas p-xl">
-        <CornerSquare position="top-left" size="sm" />
-        <span class="type-caption-xs font-bold text-mute uppercase">Kategori 01</span>
-        <h2 class="type-card-title mt-xs font-bold text-ink">PJU Tenaga Surya</h2>
-        <p class="type-body-sm mt-xs text-body">
-          Lampu jalan mandiri hemat energi seri Helios, Jupiter, dan Mars.
-        </p>
-        <div class="mt-md">
-          <Button variant="ghost-link" href="/produk/pju-tenaga-surya">Lihat Kategori →</Button>
-        </div>
-      </div>
-
-      <div class="relative border border-hairline bg-canvas p-xl">
-        <CornerSquare position="top-left" size="sm" />
-        <span class="type-caption-xs font-bold text-mute uppercase">Kategori 02</span>
-        <h2 class="type-card-title mt-xs font-bold text-ink">PLTS Residensial</h2>
-        <p class="type-body-sm mt-xs text-body">
-          Sistem pembangkit listrik tenaga surya atap hemat daya untuk hunian mandiri.
-        </p>
-        <div class="mt-md">
-          <Button variant="ghost-link" href="/produk/plts-residential">Lihat Kategori →</Button>
-        </div>
+        {#each data.products as product (product.id)}
+          <ProductCard
+            title={product.name}
+            category={product.category_name}
+            description={product.short_description || undefined}
+            imageSrc={product.featured_image?.card ||
+              product.featured_image?.original ||
+              '/images/product-pju-placeholder.svg'}
+            imageAlt={product.featured_image?.alt || product.name}
+            href={`/produk/${product.category_slug}/${product.slug}`}
+            ctaText="Lihat Spesifikasi"
+          >
+            {#snippet badge()}
+              {#if product.badge_tag}
+                <Badge variant="default">{product.badge_tag}</Badge>
+              {/if}
+            {/snippet}
+          </ProductCard>
+        {/each}
       </div>
 
-      <div class="relative border border-hairline bg-canvas p-xl">
-        <CornerSquare position="top-left" size="sm" />
-        <span class="type-caption-xs font-bold text-mute uppercase">Kategori 03</span>
-        <h2 class="type-card-title mt-xs font-bold text-ink">Solar Home System (SHS)</h2>
-        <p class="type-body-sm mt-xs text-body">
-          Paket elektrifikasi surya pedesaan dan daerah terpencil / 3T.
-        </p>
-        <div class="mt-md">
-          <Button variant="ghost-link" href="/produk/solar-home-system">Lihat Kategori →</Button>
-        </div>
-      </div>
+      <!-- Pagination Controls -->
+      {#if data.meta && typeof data.meta.last_page === 'number' && data.meta.last_page > 1}
+        {@const lastPage = data.meta.last_page}
+        <nav
+          class="mt-xxl flex flex-wrap items-center justify-center gap-xs border-t border-hairline pt-xl"
+          aria-label="Paginasi Katalog Produk"
+        >
+          <!-- Previous Button -->
+          {#if data.currentPage > 1}
+            <a
+              href={getPaginationUrl(data.currentPage - 1)}
+              class="focus-ring type-button-sm flex h-11 min-w-[44px] items-center justify-center rounded-sm border border-hairline bg-canvas px-md font-bold text-ink hover:bg-surface-soft"
+              aria-label="Halaman sebelumnya"
+            >
+              <Icon name="chevron-left" size={16} />
+              <span class="ml-xs hidden tablet:inline">Sebelumnya</span>
+            </a>
+          {:else}
+            <span
+              class="type-button-sm flex h-11 min-w-[44px] cursor-not-allowed items-center justify-center rounded-sm border border-hairline bg-surface-soft px-md font-bold text-ash opacity-60 select-none"
+              aria-disabled="true"
+            >
+              <Icon name="chevron-left" size={16} />
+              <span class="ml-xs hidden tablet:inline">Sebelumnya</span>
+            </span>
+          {/if}
 
-      <div class="relative border border-hairline bg-canvas p-xl">
-        <CornerSquare position="top-left" size="sm" />
-        <span class="type-caption-xs font-bold text-mute uppercase">Kategori 04</span>
-        <h2 class="type-card-title mt-xs font-bold text-ink">Aksesoris Kelistrikan</h2>
-        <p class="type-body-sm mt-xs text-body">
-          Inverter efisiensi tinggi, baterai LiFePO4, solar charge controller MPPT.
+          <!-- Page Numbers -->
+          {#each Array.from({ length: lastPage }, (_, i) => i + 1) as pageNum (pageNum)}
+            {@const isCurrent = pageNum === data.currentPage}
+            {#if isCurrent}
+              <span
+                class="type-button-sm flex h-11 w-11 items-center justify-center rounded-sm border border-ink bg-ink font-bold text-on-dark select-none"
+                aria-current="page"
+              >
+                {pageNum}
+              </span>
+            {:else}
+              <a
+                href={getPaginationUrl(pageNum)}
+                class="focus-ring type-button-sm flex h-11 w-11 items-center justify-center rounded-sm border border-hairline bg-canvas font-bold text-ink hover:bg-surface-soft"
+              >
+                {pageNum}
+              </a>
+            {/if}
+          {/each}
+
+          <!-- Next Button -->
+          {#if data.currentPage < lastPage}
+            <a
+              href={getPaginationUrl(data.currentPage + 1)}
+              class="focus-ring type-button-sm flex h-11 min-w-[44px] items-center justify-center rounded-sm border border-hairline bg-canvas px-md font-bold text-ink hover:bg-surface-soft"
+              aria-label="Halaman selanjutnya"
+            >
+              <span class="mr-xs hidden tablet:inline">Selanjutnya</span>
+              <Icon name="chevron-right" size={16} />
+            </a>
+          {:else}
+            <span
+              class="type-button-sm flex h-11 min-w-[44px] cursor-not-allowed items-center justify-center rounded-sm border border-hairline bg-surface-soft px-md font-bold text-ash opacity-60 select-none"
+              aria-disabled="true"
+            >
+              <span class="mr-xs hidden tablet:inline">Selanjutnya</span>
+              <Icon name="chevron-right" size={16} />
+            </span>
+          {/if}
+        </nav>
+      {/if}
+    {:else}
+      <!-- Empty State -->
+      <div
+        class="flex flex-col items-center justify-center rounded-sm border border-hairline bg-surface-soft p-section text-center"
+        data-testid="product-empty-state"
+      >
+        <div class="mb-md text-stone">
+          <Icon name="package-open" size={48} />
+        </div>
+        <h2 class="type-heading-md font-bold text-ink">Tidak Ada Produk Ditemukan</h2>
+        <p class="type-body-md mt-xs max-w-md text-body">
+          {data.selectedCategory
+            ? `Belum ada produk aktif yang terdaftar dalam kategori ${activeCategoryTitle}.`
+            : 'Belum ada produk aktif yang tersedia saat ini.'}
         </p>
-        <div class="mt-md">
-          <Button variant="ghost-link" href="/produk/aksesoris-kelistrikan">
-            Lihat Kategori →
-          </Button>
+        <div class="mt-lg">
+          <Button variant="outline" href="/produk">Tampilkan Semua Produk</Button>
         </div>
       </div>
-    </div>
+    {/if}
   </Container>
 </Section>

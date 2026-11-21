@@ -327,3 +327,59 @@ Membangun kerangka tata letak global (*global shell*), sistem navigasi multi-tin
 - [x] `npm run lint` (Prettier & ESLint) bersih: 0 error, 0 warning.
 - [x] `npm test` (Vitest) 100% hijau: 16 test files passed, 72 tests passed.
 - [x] `npm run build` sukses membuat bundle SSR Node tanpa error.
+
+---
+
+## [Fase 7] — Frontend: Beranda, Produk, Solusi (21 November 2026)
+
+### Deskripsi:
+Membangun halaman inti situs website resmi PT. Indogreen Technology And Management yang meliputi Beranda (`/`), Katalog Produk (`/produk`), Kategori Produk (`/produk/[kategori]`), Detail Lembar Data Produk (`/produk/[kategori]/[slug]`), Katalog Solusi EBT (`/solusi`), dan Detail Solusi Rekayasa (`/solusi/[slug]`). Mengintegrasikan seluruh komponen atomik dan molekuler dari Fase 5 dan 6 dengan kepatuhan penuh terhadap `docs/DESIGN.md` (ritme dark/light 64px tanpa pembatas dekoratif, batas radius 2px, font Inter, satu H1 semantik, gambar eksplisit width/height dengan art direction 16:9 desktop ke 4:5 mobile via `<picture>`, eager hero, lazy rest). Menerapkan filter PillTabs server-rendered dengan state URL (`?kategori=`), paginasi produk, penanganan galeri produk interaktif, tabel spesifikasi teknis baris selang-seling, tombol unduh datasheet, CTA 'Minta Penawaran' ke `/kontak?produk=slug`, skema Schema.org JSON-LD (Product tanpa harga dan BreadcrumbList), serta pengujian unit dan load function dengan 18 berkas pengujian (90 test cases, 100% lulus hijau).
+
+### Berkas yang Dibuat / Diperbarui:
+- `frontend/src/routes/+page.server.ts`: Server load function beranda yang memuat data teragregasi dari `api.getHome(fetch)` dengan penanganan error dan fallback data terstruktur yang aman terhadap downtime backend.
+- `frontend/src/routes/+page.svelte`: Halaman beranda inti yang menyusun:
+  1. `hero-card-dark`: Copy di sepertiga kiri, headline `display-xl` dengan kata kunci kuning (`text-accent-yellow`), satu CTA primary dan outline-on-dark, ornamen `CornerSquare` 16px, background `<picture>` dengan art direction 16:9 desktop ke 4:5 mobile, dan carousel mandiri tanpa dependensi luar (kontrol keyboard panah/home/end dan tombol jeda/lanjut saat >1 slide aktif; statis bila 1 slide).
+  2. Seksi Profil Perusahaan (`Section tone="light"`): Narasi komitmen EBT perusahaan dan 3 pilar rekayasa (PJU Mandiri, PLTS Residensial, Layanan Purna Jual) dengan tombol ke `/tentang-kami`.
+  3. Grid Kategori Produk 4-up (`Section tone="soft"`): Kartu `ProductCard` untuk masing-masing kategori produk dengan tautan ke halaman kategori.
+  4. Seksi Solusi Rekayasa EBT (`Section tone="light"`): Kartu `FeatureCard` dengan ornamen sudut hijau dan tautan ke detail arsitektur solusi.
+  5. Seksi Statistik: Dilewati secara ketat (*skipped*) karena belum ada data riil dari CMS, mencegah fabrikasi angka bisnis.
+  6. `cta-strip-dark`: Ajakan bertindak dengan headline `heading-xl` dan tombol primary mengarah ke `/kontak`.
+- `frontend/src/routes/produk/+page.server.ts`: Server load function katalog produk yang membaca parameter query `kategori` dan `page`, memanggil `api.getProducts()` dan `api.getCategories()`.
+- `frontend/src/routes/produk/+page.svelte`: Halaman katalog produk dengan `PillTabs` kategori ber-state URL (`?kategori=`), grid `ProductCard` (4-up desktop, 3-up 1024px, 2-up tablet, 1-up mobile), paginasi dinamis yang mempertahankan filter kategori, dan empty state ramah pengguna.
+- `frontend/src/routes/produk/[category]/+page.server.ts`: Server load function kategori yang mengambil data kategori dan produk via `api.getCategory()`, memicu HTTP 404 jika kategori tidak ditemukan.
+- `frontend/src/routes/produk/[category]/+page.svelte`: Halaman kategori produk dengan breadcrumb 3-tingkat, navigasi `SubNav`, header kategori dengan badge jumlah produk, grid `ProductCard`, dan Schema.org BreadcrumbList.
+- `frontend/src/routes/produk/[category]/[slug]/+page.server.ts`: Server load function detail produk yang mengambil data produk via `api.getProduct()` dan produk terkait dalam kategori yang sama, memicu HTTP 404 jika slug tidak valid.
+- `frontend/src/routes/produk/[category]/[slug]/+page.svelte`: Halaman lembar data teknis produk komprehensif memuat:
+  1. Breadcrumb 4-tingkat dan metadata SEO spesifik.
+  2. Galeri produk interaktif (gambar utama rasio aspek terjaga, thumbnail navigasi keyboard).
+  3. Ringkasan produk dengan single `H1`, badge status/seri, dan deskripsi singkat.
+  4. Aksi utama: CTA 'Minta Penawaran' ke `/kontak?produk=slug` dan tombol unduh datasheet PDF (`button-outline`).
+  5. Bagian fitur dan deskripsi lengkap dari CMS.
+  6. Tabel spesifikasi teknis bergaris hairline dengan baris selang-seling `surface-soft` yang dikelompokkan berdasarkan grup parameter.
+  7. Grid produk terkait (up to 4 produk).
+  8. Schema.org JSON-LD `Product` (tanpa field harga/offers jika tidak tersedia) dan `BreadcrumbList`.
+- `frontend/src/routes/solusi/+page.server.ts`: Server load function yang memuat daftar solusi EBT via `api.getSolutions()`.
+- `frontend/src/routes/solusi/+page.svelte`: Halaman katalog solusi dengan single `H1`, `SubNav`, grid `FeatureCard` (3-up desktop, 2-up tablet, 1-up mobile) berornamen sudut hijau, tahapan metodologi EPC, dan CTA strip ke `/kontak`.
+- `frontend/src/routes/solusi/[slug]/+page.server.ts`: Server load function detail solusi yang mengambil data via `api.getSolution(slug)`, memicu HTTP 404 jika slug tidak ditemukan.
+- `frontend/src/routes/solusi/[slug]/+page.svelte`: Halaman detail rekayasa sistem memuat badge tipe sistem, single `H1`, diagram alur arsitektur, penjelasan prinsip kerja sistem, daftar manfaat dengan ikon centang hijau, daftar bill of materials (BOM), produk terkait, dan CTA konsultasi ke `/kontak?solusi=slug`.
+- `frontend/src/lib/components/ui/types.ts` & `frontend/src/lib/components/ui/Icon.svelte`: Penambahan nama ikon Lucide `play`, `pause`, `home`, `cpu`, `truck`, `package-open`.
+- `frontend/static/images/`: Penambahan aset SVG placeholder terstandarisasi (`hero-placeholder.svg`, `hero-mobile-placeholder.svg` rasio 4:5, `product-pju-placeholder.svg`).
+- `frontend/src/routes/page-loaders.test.ts`: 11 pengujian unit untuk seluruh server load function (keberhasilan pemuatan data, penanganan error 404, fallback downtime API, dan filter kategori query string).
+- `frontend/src/routes/pages.test.ts`: 7 pengujian integrasi rendering komponen halaman beranda, katalog, detail produk, dan solusi.
+- `docs/CHANGELOG-phases.md`: Pencatatan log kemajuan pekerjaan Fase 7.
+
+### Status Quality Gate:
+- [x] Beranda (`/`): `hero-card-dark` dengan art direction `<picture>` (16:9 desktop ke 4:5 mobile), copy di sepertiga kiri, kata kunci kuning pada headline, tombol CTA primary tunggal dan outline-on-dark, carousel mandiri (kontrol keyboard dan tombol jeda); seksi profil perusahaan; grid kategori 4-up; seksi solusi; callout-stat dilewati karena data riil CMS belum tersedia; cta-strip-dark menuju `/kontak`.
+- [x] Ritme dark/light bergantian dengan jarak vertikal 64px (`section-padding`) tanpa pembatas dekoratif.
+- [x] `/produk`: `PillTabs` kategori dengan state URL (`?kategori=`) yang server-rendered dan dapat dibagikan, grid 4-up `ProductCard`, paginasi ber-state, dan empty state.
+- [x] `/produk/[kategori]` & `/produk/[kategori]/[slug]`: breadcrumb semantik; galeri dengan gambar utama dan thumbnail; ringkasan; fitur; tabel spesifikasi teknis hairline dengan baris selang-seling `surface-soft`; tombol unduh datasheet; CTA 'Minta Penawaran' ke `/kontak?produk=slug`; produk terkait; JSON-LD Product (tanpa harga) dan BreadcrumbList.
+- [x] `/solusi` & `/solusi/[slug]`: daftar solusi (`FeatureCard`), detail dengan penjelasan arsitektur, manfaat, daftar komponen, produk terkait, dan CTA.
+- [x] SEO setiap halaman menggunakan `SeoHead` dengan title unik (`%s | INDOGREEN`), deskripsi dari CMS, dan satu `H1` semantik per halaman.
+- [x] Gambar: dimensi eksplisit `width` dan `height`, `loading="lazy"` kecuali hero (`loading="eager"` dan `fetchpriority="high"`), art direction responsif.
+- [x] State loading, error, dan empty jelas; kegagalan API ditangani secara terstruktur dan tidak membuat aplikasi crash.
+- [x] Seluruh 18 berkas pengujian Vitest (90 test cases) lulus hijau (100%).
+- [x] Seluruh 69 pengujian Pest backend lulus hijau (100%, 505 assertions).
+- [x] Pemeriksaan tipe `npm run check` (svelte-check) bersih: 0 error, 0 warning.
+- [x] Pemeriksaan gaya kode dan linter `npm run lint` bersih: 0 error, 0 warning.
+- [x] Build produksi SSR `npm run build` sukses tanpa galat.
+

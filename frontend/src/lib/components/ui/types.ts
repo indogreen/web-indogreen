@@ -57,4 +57,10 @@ export type IconName =
   | 'calendar'
   | 'building'
   | 'building-2'
-  | 'help-circle';
+  | 'help-circle'
+  | 'play'
+  | 'pause'
+  | 'home'
+  | 'cpu'
+  | 'truck'
+  | 'package-open';
